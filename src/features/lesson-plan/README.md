@@ -1,0 +1,49 @@
+# Lesson plan · Template C (English + Urdu)
+
+One component renders both languages: `<LessonPlanC lang="en" | "ur" />`.
+
+## Add to your project (React + Vite, Tailwind is fine)
+
+1. Copy this folder to `src/features/lesson-plan/`
+2. `npm i @fontsource/ibm-plex-sans @fontsource/noto-nastaliq-urdu`
+3. Use it:
+
+```jsx
+import { LessonPlanC, lessonEn, lessonUr } from '@/features/lesson-plan'; // or a relative path
+
+<LessonPlanC
+  lang="ur"                    // 'en' | 'ur'  (Urdu = right-to-left + Nastaliq)
+  lesson={lessonUr}            // same shape as sampleLessons.js, text in that language
+  branding={{
+    logo: 'sed',               // 'sed' (default) | 'school' | 'none'
+    schoolLogoUrl,             // teacher's uploaded logo, used when logo === 'school'
+    schoolName, teacherName,
+    appName: 'Your App Name',  // always printed bottom-left
+    extraMargin: 'none',       // advanced: 'left' | 'right' = +5 mm for binding
+  }}
+  page={1} pages={1}
+/>
+```
+
+## Printing
+
+Render the plan on its own screen or modal and call `window.print()`. Hide the rest of
+your app with Tailwind's `print:hidden` on the header, sidebar and buttons. The page is
+exactly A4 with 12 mm top/bottom and 15 mm side margins (`@page { size: A4; margin: 0 }`
+is included).
+
+## Timing
+
+Introduction / Development / Conclusion / Assessment show minutes. Defaults: 30 min =
+5-15-3-7, 40 min = 5-20-5-10, other lengths scale and always add up. A teacher's own
+minutes go in `lesson.timing = [a, b, c, d]`.
+
+## Notes
+
+- Colours are pure black and white plus light grey, so it prints well on mono printers.
+  Backgrounds are forced to print (`print-color-adjust: exact`).
+- Not included yet: automatic splitting of a long lesson over several pages, and
+  "fit to one page" shrinking. `page` and `pages` are plain props for now.
+- Jameel Noori Nastaleeq: used when installed on the device. To guarantee it, add an
+  `@font-face` with the font file (check its licence) and keep Noto as fallback.
+- Check that you may use the SED logo in your app before release.
