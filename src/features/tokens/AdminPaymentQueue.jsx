@@ -2,14 +2,26 @@ import { useEffect, useState } from "react";
 import {
   collection,
   db,
-  functions,
-  httpsCallable,
+  doc,
+  increment,
   onSnapshot,
   query,
+  runTransaction,
+  serverTimestamp,
   where,
 } from "../../services/firebase.js";
+import { useUser } from "../../context/UserContext.jsx";
+import { isMonthInActiveWindow } from "../../utils/monthUtils.js";
+
+const plans = {
+  basic: { type: "base", tokens: 50 },
+  standard: { type: "base", tokens: 110 },
+  pro: { type: "base", tokens: 170 },
+  addon: { type: "addon", tokens: 15 },
+};
 
 export default function AdminPaymentQueue() {
+  const { currentUser, isAdmin } = useUser();
   const [requests, setRequests] = useState([]);
   const [error, setError] = useState("");
   const [busyRequestId, setBusyRequestId] = useState("");
@@ -47,8 +59,89 @@ export default function AdminPaymentQueue() {
     setBusyRequestId(requestId);
     setError("");
     try {
-      const reviewPayment = httpsCallable(functions, action);
-      await reviewPayment({ requestId });
+      if (!currentUser || !isAdmin) {
+        throw new Error("Administrator access is required.");
+      }
+
+      await runTransaction(db, async (transaction) => {
+        const requestRef = doc(db, "payment_requests", requestId);
+        const requestSnapshot = await transaction.get(requestRef);
+        if (!requestSnapshot.exists()) {
+          throw new Error("Payment request was not found.");
+        }
+
+        const payment = requestSnapshot.data();
+        if (payment.status !== "pending") {
+          throw new Error("This payment request has already been reviewed.");
+        }
+
+        if (action === "reject") {
+          transaction.update(requestRef, {
+            status: "rejected",
+            rejectedAt: serverTimestamp(),
+            rejectedBy: currentUser.uid,
+          });
+          return;
+        }
+
+        const plan = plans[payment.planId];
+        if (
+          !plan ||
+          payment.type !== plan.type ||
+          payment.tokenAmount !== plan.tokens ||
+          !payment.userId ||
+          !isMonthInActiveWindow(payment.targetMonth)
+        ) {
+          throw new Error("The payment request details are invalid.");
+        }
+
+        const userRef = doc(db, "users", payment.userId);
+        const userSnapshot = await transaction.get(userRef);
+        if (!userSnapshot.exists()) {
+          throw new Error("The purchaser account was not found.");
+        }
+
+        const user = userSnapshot.data();
+        if (
+          plan.type === "addon" &&
+          user.subscriptions?.[payment.targetMonth]?.active !== true
+        ) {
+          throw new Error(
+            "An active base subscription is required for add-on tokens.",
+          );
+        }
+
+        const receiptRef = doc(db, "payment_receipts", payment.tid);
+        const receiptSnapshot = await transaction.get(receiptRef);
+        if (receiptSnapshot.exists()) {
+          throw new Error("This transaction ID has already been approved.");
+        }
+
+        const userUpdate = {
+          [`tokens.${payment.targetMonth}`]: increment(plan.tokens),
+          lastPaymentRequestId: requestId,
+        };
+        if (plan.type === "base") {
+          userUpdate[`subscriptions.${payment.targetMonth}`] = {
+            planId: payment.planId,
+            active: true,
+            activatedAt: serverTimestamp(),
+          };
+        }
+
+        transaction.update(userRef, userUpdate);
+        transaction.update(requestRef, {
+          status: "approved",
+          approvedAt: serverTimestamp(),
+          approvedBy: currentUser.uid,
+        });
+        transaction.set(receiptRef, {
+          paymentRequestId: requestId,
+          userId: payment.userId,
+          approvedBy: currentUser.uid,
+          createdAt: serverTimestamp(),
+        });
+      });
     } catch (reviewError) {
       console.error(`Could not ${action} payment request:`, reviewError);
       setError(
@@ -102,7 +195,7 @@ export default function AdminPaymentQueue() {
                 <button
                   className="min-h-10 rounded-lg bg-emerald-700 px-3 py-2 text-sm font-semibold text-white disabled:opacity-50"
                   disabled={Boolean(busyRequestId)}
-                  onClick={() => reviewRequest(payment.id, "approvePaymentRequest")}
+                  onClick={() => reviewRequest(payment.id, "approve")}
                   type="button"
                 >
                   {busyRequestId === payment.id ? "Processing…" : "Approve"}
@@ -110,7 +203,7 @@ export default function AdminPaymentQueue() {
                 <button
                   className="min-h-10 rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 disabled:opacity-50"
                   disabled={Boolean(busyRequestId)}
-                  onClick={() => reviewRequest(payment.id, "rejectPaymentRequest")}
+                  onClick={() => reviewRequest(payment.id, "reject")}
                   type="button"
                 >
                   Reject

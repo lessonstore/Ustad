@@ -2,8 +2,10 @@ import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   getAuth,
   GoogleAuthProvider,
+  getRedirectResult,
   onAuthStateChanged,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
   getIdTokenResult,
 } from "firebase/auth";
@@ -19,15 +21,15 @@ import {
   increment,
   onSnapshot,
   query,
+  runTransaction,
   serverTimestamp,
   setDoc,
   updateDoc,
   where,
 } from "firebase/firestore";
-import { getFunctions, httpsCallable } from "firebase/functions";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyD5P3vOVgyZORM3sOOKGQ80j8j_-ER2YHO",
+  apiKey: "AIzaSyD5P3v0VgyZORM3sOOKGQ80j8j_-ER2YH0",
   authDomain: "ustad-app-c1bde.firebaseapp.com",
   projectId: "ustad-app-c1bde",
   storageBucket: "ustad-app-c1bde.firebasestorage.app",
@@ -41,7 +43,6 @@ const app = getApps().length ? getApp() : initializeApp(firebaseConfig);
 export const auth = getAuth(app);
 export const googleProvider = new GoogleAuthProvider();
 export const db = getFirestore(app);
-export const functions = getFunctions(app);
 export {
   addDoc,
   arrayUnion,
@@ -51,14 +52,16 @@ export {
   FieldPath,
   getDoc,
   getIdTokenResult,
-  httpsCallable,
+  getRedirectResult,
   increment,
   onAuthStateChanged,
   onSnapshot,
   query,
+  runTransaction,
   serverTimestamp,
   setDoc,
   signInWithPopup,
+  signInWithRedirect,
   signOut,
   updateDoc,
   where,

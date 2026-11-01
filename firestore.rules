@@ -34,6 +34,14 @@ service cloud.firestore {
         (monthKey == currentMonthKey() || monthKey == previousMonthKey());
     }
 
+    function validPaymentPlan(type, planId, tokenAmount) {
+      return (type == 'base' &&
+          ((planId == 'basic' && tokenAmount == 50) ||
+            (planId == 'standard' && tokenAmount == 110) ||
+            (planId == 'pro' && tokenAmount == 170))) ||
+        (type == 'addon' && planId == 'addon' && tokenAmount == 15);
+    }
+
     function validUserCreation(uid) {
       return request.resource.data.keys().hasOnly([
           'uid', 'email', 'displayName', 'tokens', 'subscriptions',
@@ -134,6 +142,67 @@ service cloud.firestore {
         unchangedOrEmptyMap('unlockedLessons');
     }
 
+    function validAdminCreditSubscription(payment, month) {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      let subscriptionMonths = request.resource.data.subscriptions
+        .diff(resource.data.subscriptions).affectedKeys();
+      let subscription = request.resource.data.subscriptions.get(month, {});
+      return (payment.type == 'base' &&
+          changed.hasAny(['subscriptions']) &&
+          subscriptionMonths.hasOnly([month]) &&
+          subscriptionMonths.hasAny([month]) &&
+          subscription.keys().hasOnly([
+            'planId', 'active', 'activatedAt'
+          ]) &&
+          subscription.keys().hasAll([
+            'planId', 'active', 'activatedAt'
+          ]) &&
+          subscription.planId == payment.planId &&
+          subscription.active == true &&
+          subscription.activatedAt == request.time) ||
+        (payment.type == 'addon' &&
+          !changed.hasAny(['subscriptions']) &&
+          resource.data.subscriptions.get(month, {}).get('active', false) ==
+            true);
+    }
+
+    function validAdminCreditDetails(uid, payment, reviewed, month) {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      let tokenMonths = request.resource.data.tokens
+        .diff(resource.data.tokens).affectedKeys();
+      let oldBalance = resource.data.tokens.get(month, 0);
+      let newBalance = request.resource.data.tokens.get(month, 0);
+      return isAdmin() &&
+        payment.userId == uid &&
+        payment.status == 'pending' &&
+        reviewed.status == 'approved' &&
+        reviewed.approvedBy == request.auth.uid &&
+        reviewed.approvedAt == request.time &&
+        activeMonth(month) &&
+        validPaymentPlan(payment.type, payment.planId, payment.tokenAmount) &&
+        changed.hasOnly(['tokens', 'subscriptions', 'lastPaymentRequestId']) &&
+        changed.hasAll(['tokens', 'lastPaymentRequestId']) &&
+        request.resource.data.lastPaymentRequestId is string &&
+        request.resource.data.lastPaymentRequestId.size() > 0 &&
+        tokenMonths.hasOnly([month]) &&
+        tokenMonths.hasAny([month]) &&
+        oldBalance is int && newBalance is int &&
+        newBalance == oldBalance + payment.tokenAmount &&
+        validAdminCreditSubscription(payment, month);
+    }
+
+    function validAdminCredit(uid) {
+      let approvalId = request.resource.data.get('lastPaymentRequestId', null);
+      let paymentPath =
+        /databases/$(database)/documents/payment_requests/$(approvalId);
+      let payment = get(paymentPath).data;
+      let reviewed = getAfter(paymentPath).data;
+      let month = payment.targetMonth;
+      return approvalId is string &&
+        approvalId != resource.data.get('lastPaymentRequestId', null) &&
+        validAdminCreditDetails(uid, payment, reviewed, month);
+    }
+
     function validPaymentRequest() {
       let data = request.resource.data;
       return data.keys().hasOnly([
@@ -158,16 +227,69 @@ service cloud.firestore {
         data.createdAt == request.time;
     }
 
+    function validAdminRequestReview(requestId) {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      let payment = resource.data;
+      let reviewed = request.resource.data;
+      let userPath = /databases/$(database)/documents/users/$(payment.userId);
+      let receiptPath =
+        /databases/$(database)/documents/payment_receipts/$(payment.tid);
+      let userAfter = getAfter(userPath).data;
+      let receiptAfter = getAfter(receiptPath).data;
+      let isApproval = reviewed.status == 'approved' &&
+        changed.hasOnly(['status', 'approvedAt', 'approvedBy']) &&
+        reviewed.approvedAt == request.time &&
+        reviewed.approvedBy == request.auth.uid &&
+        existsAfter(userPath) &&
+        userAfter.get('lastPaymentRequestId', null) == requestId &&
+        existsAfter(receiptPath) &&
+        receiptAfter.paymentRequestId == requestId &&
+        receiptAfter.userId == payment.userId &&
+        receiptAfter.approvedBy == request.auth.uid;
+      let isRejection = reviewed.status == 'rejected' &&
+        changed.hasOnly(['status', 'rejectedAt', 'rejectedBy']) &&
+        reviewed.rejectedAt == request.time &&
+        reviewed.rejectedBy == request.auth.uid;
+      return isAdmin() &&
+        resource.data.status == 'pending' &&
+        requestId is string &&
+        (isApproval || isRejection);
+    }
+
+    function validPaymentReceipt(tid) {
+      let data = request.resource.data;
+      let paymentPath =
+        /databases/$(database)/documents/payment_requests/$(data.paymentRequestId);
+      let payment = get(paymentPath).data;
+      let reviewed = getAfter(paymentPath).data;
+      return isAdmin() &&
+        data.keys().hasOnly([
+          'paymentRequestId', 'userId', 'approvedBy', 'createdAt'
+        ]) &&
+        data.keys().hasAll([
+          'paymentRequestId', 'userId', 'approvedBy', 'createdAt'
+        ]) &&
+        data.userId is string &&
+        data.approvedBy == request.auth.uid &&
+        data.createdAt == request.time &&
+        payment.status == 'pending' &&
+        reviewed.status == 'approved' &&
+        reviewed.approvedBy == request.auth.uid &&
+        payment.userId == data.userId &&
+        payment.tid == tid;
+    }
+
     match /users/{uid} {
       allow read: if signedIn() && request.auth.uid == uid;
       allow create: if signedIn() &&
         request.auth.uid == uid &&
         validUserCreation(uid);
       allow update: if signedIn() &&
-        request.auth.uid == uid &&
-        (validUnlockUpdate() ||
-          validPurgeUpdate() ||
-          validProfileSync(uid));
+        ((request.auth.uid == uid &&
+            (validUnlockUpdate() ||
+              validPurgeUpdate() ||
+              validProfileSync(uid))) ||
+          validAdminCredit(uid));
       allow delete: if false;
     }
 
@@ -175,6 +297,13 @@ service cloud.firestore {
       allow create: if signedIn() && validPaymentRequest();
       allow read: if signedIn() &&
         (resource.data.userId == request.auth.uid || isAdmin());
+      allow update: if validAdminRequestReview(requestId);
+      allow delete: if false;
+    }
+
+    match /payment_receipts/{tid} {
+      allow read: if isAdmin();
+      allow create: if validPaymentReceipt(tid);
       allow update, delete: if false;
     }
   }

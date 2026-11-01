@@ -16,11 +16,13 @@ import {
   FieldPath,
   getDoc,
   getIdTokenResult,
+  getRedirectResult,
   increment,
   onAuthStateChanged,
   onSnapshot,
   setDoc,
   signInWithPopup,
+  signInWithRedirect,
   signOut as firebaseSignOut,
   updateDoc,
   googleProvider,
@@ -59,6 +61,12 @@ export function UserProvider({ children }) {
 
   useEffect(() => {
     let active = true;
+    void getRedirectResult(auth).catch((error) => {
+      if (!active) return;
+      console.error("Could not complete Google sign-in redirect:", error);
+      setAuthError("Could not complete sign-in. Please try again.");
+    });
+
     const unsubscribeAuth = onAuthStateChanged(auth, (user) => {
       authGenerationRef.current += 1;
       const generation = authGenerationRef.current;
@@ -179,10 +187,17 @@ export function UserProvider({ children }) {
     setAuthError("");
     try {
       await signInWithPopup(auth, googleProvider);
-    } catch (error) {
-      console.error("Could not sign in:", error);
-      setAuthError("Could not sign in. Please try again.");
-      throw error;
+    } catch (popupError) {
+      try {
+        await signInWithRedirect(auth, googleProvider);
+      } catch (redirectError) {
+        console.error("Could not sign in with popup or redirect:", {
+          popupError,
+          redirectError,
+        });
+        setAuthError("Could not sign in. Please try again.");
+        throw redirectError;
+      }
     }
   }, []);
 
