@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from "react";
 import { LessonPlanEditor } from "./index.js";
 import { lessonEn, lessonUr } from "./sampleLessons.js";
+import { useUser } from "../../context/UserContext.jsx";
 import InstallPrompt from "../../components/InstallPrompt.jsx";
 import { curriculumData } from "../../data/curriculumData.js";
+import { isMonthInActiveWindow } from "../../utils/monthUtils.js";
 import "./LessonPlanScreen.css";
 
 const storageKeys = {
@@ -30,6 +32,8 @@ function readStoredValue(key) {
 }
 
 export default function LessonPlanScreen() {
+  const { currentUser, userProfile, loading, signIn, authError, profileError } =
+    useUser();
   const searchParams = new URLSearchParams(window.location.search);
   const requestedBookId = searchParams.get("bookId");
   const selectedBook = curriculumData
@@ -44,6 +48,41 @@ export default function LessonPlanScreen() {
       : 1;
   const lang = selectedBook?.language ?? "en";
   const lessonId = `${selectedBook?.bookId ?? `sample-${lang}`}-${lessonNumber}`;
+  const now = new Date();
+  const requestedLesson = selectedBook?.lessons.find(
+    (lesson) => lesson.lessonNumber === lessonNumber,
+  );
+  const academicYearStart =
+    now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+  const lessonMonth = selectedBook
+    ? Object.entries(selectedBook.academicSchedule).find(
+        ([, schedule]) =>
+          lessonNumber >= schedule.startLesson &&
+          lessonNumber <= schedule.endLesson,
+      )?.[0]
+    : null;
+  const lessonMonthNumber = lessonMonth
+    ? new Date(`${lessonMonth} 1, 2000`).getMonth() + 1
+    : null;
+  const lessonMonthYear =
+    lessonMonthNumber === null
+      ? null
+      : lessonMonthNumber >= 4
+        ? academicYearStart
+        : academicYearStart + 1;
+  const lessonMonthKey =
+    lessonMonthYear === null
+      ? null
+      : `${lessonMonthYear}-${String(lessonMonthNumber).padStart(2, "0")}`;
+  const lessonIsAccessible =
+    lessonNumber === 1 ||
+    (Boolean(currentUser) &&
+      isMonthInActiveWindow(lessonMonthKey) &&
+      Boolean(
+        userProfile?.unlockedLessons?.[lessonMonthKey]?.includes(
+          requestedLesson?.id,
+        ),
+      ));
   const lessonFromServer = {
     ...(lang === "ur" ? lessonUr : lessonEn),
     lessonNo: lessonNumber,
@@ -68,6 +107,44 @@ export default function LessonPlanScreen() {
   const [previewContentHeight, setPreviewContentHeight] = useState(pageHeightPx);
   const previewViewportRef = useRef(null);
   const previewScaleRef = useRef(null);
+
+  if (lessonNumber !== 1 && (loading || !lessonIsAccessible)) {
+    return (
+      <main className="grid min-h-screen place-items-center bg-slate-100 p-6 text-slate-900">
+        <section className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-sm">
+          <h1 className="text-xl font-semibold">Lesson access required</h1>
+          <p className="mt-3 text-sm text-slate-600">
+            {loading
+              ? "Checking your account access…"
+              : !currentUser
+                ? "Sign in and unlock this lesson from the catalog."
+                : profileError ||
+                  "This lesson is locked or outside the current two-month access window."}
+          </p>
+          {(authError || profileError) && (
+            <p className="mt-3 text-sm text-rose-700" role="alert">
+              {authError || profileError}
+            </p>
+          )}
+          {!currentUser && !loading && (
+            <button
+              className="mt-5 min-h-11 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white"
+              onClick={() => void signIn().catch(() => {})}
+              type="button"
+            >
+              Sign in with Google
+            </button>
+          )}
+          <a
+            className="mt-5 block text-sm font-medium text-indigo-700"
+            href="/"
+          >
+            Return to catalog
+          </a>
+        </section>
+      </main>
+    );
+  }
 
   useEffect(() => {
     const documentPreview =

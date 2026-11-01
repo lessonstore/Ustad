@@ -1,0 +1,181 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    function signedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return signedIn() && request.auth.token.admin == true;
+    }
+
+    function currentMonthKey() {
+      let month = request.time.month();
+      return string(request.time.year()) + '-' +
+        (month < 10 ? '0' : '') + string(month);
+    }
+
+    function previousMonthKey() {
+      let month = request.time.month() == 1 ? 12 : request.time.month() - 1;
+      let year = request.time.month() == 1
+        ? request.time.year() - 1
+        : request.time.year();
+      return string(year) + '-' + (month < 10 ? '0' : '') + string(month);
+    }
+
+    function validMonth(monthKey) {
+      return monthKey is string &&
+        monthKey.matches('^\\d{4}-(0[1-9]|1[0-2])$');
+    }
+
+    function activeMonth(monthKey) {
+      return validMonth(monthKey) &&
+        (monthKey == currentMonthKey() || monthKey == previousMonthKey());
+    }
+
+    function validUserCreation(uid) {
+      return request.resource.data.keys().hasOnly([
+          'uid', 'email', 'displayName', 'tokens', 'subscriptions',
+          'unlockedLessons'
+        ]) &&
+        request.resource.data.keys().hasAll([
+          'uid', 'email', 'displayName', 'tokens', 'subscriptions',
+          'unlockedLessons'
+        ]) &&
+        request.resource.data.uid == uid &&
+        (request.resource.data.email == null ||
+          request.resource.data.email is string) &&
+        (request.resource.data.displayName == null ||
+          request.resource.data.displayName is string) &&
+        request.resource.data.tokens is map &&
+        request.resource.data.tokens.keys().size() == 0 &&
+        request.resource.data.subscriptions is map &&
+        request.resource.data.subscriptions.keys().size() == 0 &&
+        request.resource.data.unlockedLessons is map &&
+        request.resource.data.unlockedLessons.keys().size() == 0;
+    }
+
+    function validUnlockForMonth(month) {
+      let tokenMonths = request.resource.data.tokens
+        .diff(resource.data.tokens).affectedKeys();
+      let lessonMonths = request.resource.data.unlockedLessons
+        .diff(resource.data.unlockedLessons).affectedKeys();
+      let oldBalance = resource.data.tokens.get(month, 0);
+      let newBalance = request.resource.data.tokens.get(month, 0);
+      let oldLessons = resource.data.unlockedLessons.get(month, []);
+      let newLessons = request.resource.data.unlockedLessons.get(month, []);
+      return tokenMonths.hasOnly([month]) &&
+        tokenMonths.hasAny([month]) &&
+        lessonMonths.hasOnly([month]) &&
+        lessonMonths.hasAny([month]) &&
+        oldBalance is int && newBalance is int &&
+        oldBalance > 0 && newBalance == oldBalance - 1 &&
+        oldLessons is list && newLessons is list &&
+        newLessons.size() == oldLessons.size() + 1 &&
+        newLessons.hasAll(oldLessons);
+    }
+
+    function validUnlockUpdate() {
+      return request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['tokens', 'unlockedLessons']) &&
+        request.resource.data.subscriptions == resource.data.subscriptions &&
+        (validUnlockForMonth(currentMonthKey()) ||
+          validUnlockForMonth(previousMonthKey()));
+    }
+
+    function removalOnly(oldMap, newMap) {
+      let changes = newMap.diff(oldMap);
+      return changes.removedKeys().size() > 0 &&
+        changes.addedKeys().size() == 0 &&
+        changes.changedKeys().size() == 0 &&
+        !changes.removedKeys().hasAny([
+          currentMonthKey(), previousMonthKey()
+        ]);
+    }
+
+    function validPurgeUpdate() {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      return changed.size() > 0 &&
+        changed.hasOnly(['tokens', 'subscriptions', 'unlockedLessons']) &&
+        (!changed.hasAny(['tokens']) ||
+          removalOnly(resource.data.tokens, request.resource.data.tokens)) &&
+        (!changed.hasAny(['subscriptions']) ||
+          removalOnly(resource.data.subscriptions,
+            request.resource.data.subscriptions)) &&
+        (!changed.hasAny(['unlockedLessons']) ||
+          removalOnly(resource.data.unlockedLessons,
+            request.resource.data.unlockedLessons));
+    }
+
+    function unchangedOrEmptyMap(fieldName) {
+      return !request.resource.data.diff(resource.data)
+          .affectedKeys().hasAny([fieldName]) ||
+        ((!resource.data.keys().hasAny([fieldName]) ||
+          resource.data.get(fieldName, null) == null) &&
+          request.resource.data.get(fieldName, {}) is map &&
+          request.resource.data.get(fieldName, {}).keys().size() == 0) ||
+        request.resource.data.get(fieldName, {}) ==
+          resource.data.get(fieldName, {});
+    }
+
+    function validProfileSync(uid) {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      return changed.size() > 0 &&
+        changed.hasOnly([
+          'email', 'displayName', 'tokens', 'subscriptions',
+          'unlockedLessons'
+        ]) &&
+        request.resource.data.uid == uid &&
+        request.resource.data.email == request.auth.token.get('email', null) &&
+        request.resource.data.displayName == request.auth.token.get('name', null) &&
+        unchangedOrEmptyMap('tokens') &&
+        unchangedOrEmptyMap('subscriptions') &&
+        unchangedOrEmptyMap('unlockedLessons');
+    }
+
+    function validPaymentRequest() {
+      let data = request.resource.data;
+      return data.keys().hasOnly([
+          'userId', 'userEmail', 'type', 'planId', 'tokenAmount',
+          'targetMonth', 'senderPhone', 'tid', 'status', 'createdAt'
+        ]) &&
+        data.keys().hasAll([
+          'userId', 'userEmail', 'type', 'planId', 'tokenAmount',
+          'targetMonth', 'senderPhone', 'tid', 'status', 'createdAt'
+        ]) &&
+        data.userId == request.auth.uid &&
+        (data.userEmail == null || data.userEmail is string) &&
+        data.type in ['base', 'addon'] &&
+        data.planId is string &&
+        data.tokenAmount is int &&
+        activeMonth(data.targetMonth) &&
+        data.senderPhone is string &&
+        data.senderPhone.matches('^[0-9]{11}$') &&
+        data.tid is string &&
+        data.tid.matches('^[A-Z0-9]{11}$') &&
+        data.status == 'pending' &&
+        data.createdAt == request.time;
+    }
+
+    match /users/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow create: if signedIn() &&
+        request.auth.uid == uid &&
+        validUserCreation(uid);
+      allow update: if signedIn() &&
+        request.auth.uid == uid &&
+        (validUnlockUpdate() ||
+          validPurgeUpdate() ||
+          validProfileSync(uid));
+      allow delete: if false;
+    }
+
+    match /payment_requests/{requestId} {
+      allow create: if signedIn() && validPaymentRequest();
+      allow read: if signedIn() &&
+        (resource.data.userId == request.auth.uid || isAdmin());
+      allow update, delete: if false;
+    }
+  }
+}
