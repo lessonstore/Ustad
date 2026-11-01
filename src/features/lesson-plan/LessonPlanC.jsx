@@ -14,7 +14,16 @@ const DEFAULT_BRANDING = {
 };
 
 const Item = ({ i }) => (typeof i === 'string' ? i : <><b>{i.lead}</b> {i.text}</>);
+const SECTION_KEYS = ['introduction', 'development', 'conclusion', 'assessment', 'followUp'];
 const longest = (arr) => arr.reduce((a, c) => (c.length > a.length ? c : a), '');
+
+function Pencil({ onClick, label, abs }) {
+  return (
+    <button type="button" className={'lpc-edit' + (abs ? ' lpc-edit--abs' : '')} onClick={onClick} aria-label={label} title={label}>
+      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 013 3L7 19l-4 1 1-4z" /></svg>
+    </button>
+  );
+}
 
 function Editable({ children, className }) {
   return (
@@ -62,7 +71,7 @@ function useSeparateLines(deps) {
   return { boxRef, aRef, bRef, sep };
 }
 
-function Banner({ l, b, S, ur }) {
+function Banner({ l, b, S, ur, onEdit }) {
   const { boxRef, aRef, bRef, sep } = useSeparateLines([
     l.domain,
     l.subDomain,
@@ -70,6 +79,7 @@ function Banner({ l, b, S, ur }) {
     ur,
   ]);
   const badge = <div className="lpc-badge">{S.lesson} {l.lessonNo}</div>;
+  const pencil = onEdit ? <Pencil abs onClick={() => onEdit('banner')} label={S.dialog.banner} /> : null;
 
   if (ur) {
     return (
@@ -87,6 +97,7 @@ function Banner({ l, b, S, ur }) {
         </div>
         <div className="lpc-title-wrap"><div className="lpc-title">{l.topic}</div></div>
         {badge}
+        {pencil}
       </div>
     );
   }
@@ -101,6 +112,7 @@ function Banner({ l, b, S, ur }) {
         </div>
       </div>
       {badge}
+      {pencil}
     </div>
   );
 }
@@ -122,7 +134,7 @@ function Footer({ b, S, page, pages }) {
  * Lesson plan, template C ("Planner Checklist"), English or Urdu, one A4 page.
  * <LessonPlanC lang="ur" lesson={lessonUr} branding={{ teacherName, schoolName }} />
  */
-export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, capsules = true }) {
+export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, capsules = true, editable = false, onEdit, onLayout }) {
   const S = STRINGS[lang] ?? STRINGS.en;
   const ur = lang === 'ur';
   const b = { ...DEFAULT_BRANDING, ...branding };
@@ -145,9 +157,17 @@ export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, cap
   };
 
   const cls = `lpc${ur ? ' lpc--ur' : ''}${capsules ? '' : ' lpc--plain'}`;
-  const renderBox = ([title, items, timed], n) => (
+  const renderBox = ([title, items, timed], n, edit = false) => (
     <div className="lpc-box" key={n}>
-      <h3><span className="lpc-cap">{title}</span>{timed && <span className="lpc-pill">{mins[n]} {S.min}</span>}</h3>
+      <h3>
+        <span className="lpc-cap">{title}</span>
+        {(timed || edit) && (
+          <span className="lpc-h3-end">
+            {timed && <span className="lpc-pill">{mins[n]} {S.min}</span>}
+            {edit && <Pencil onClick={() => onEdit?.(SECTION_KEYS[n])} label={`${S.dialog.editBox}: ${title}`} />}
+          </span>
+        )}
+      </h3>
       {items.map((it, k) => <div className="lpc-check" key={k}><i /><span><Editable><Item i={it} /></Editable></span></div>)}
     </div>
   );
@@ -206,6 +226,7 @@ export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, cap
             : nextPages,
         );
       }
+      onLayout?.({ pages: nextPages.length, oversize: boxHeights.some((height) => height > availableHeight) });
     }
 
     paginate();
@@ -247,7 +268,7 @@ export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, cap
 
       {pages.map((pageIndexes, pageIndex) => (
         <div className={cls} dir={S.dir} lang={lang} style={style} key={pageIndex}>
-          <Banner l={l} b={b} S={S} ur={ur} />
+          <Banner l={l} b={b} S={S} ur={ur} onEdit={editable ? onEdit : undefined} />
           <div className="lpc-grid">
             <div className="lpc-col lpc-left">
               {pageIndex === 0 && (
@@ -262,12 +283,14 @@ export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, cap
                     ))}
                     <p className="lpc-k lpc-gap">{S.bring}</p>
                     <Editable>{l.materials}{ur ? '۔' : '.'}</Editable>
+                    {editable && <Pencil abs onClick={() => onEdit?.('glance')} label={`${S.dialog.editBox}: ${S.glance}`} />}
                   </div>
                   <div className="lpc-box">
                     <p className="lpc-k">{S.teacherNotes}</p>
                     {l.teacherInfo.map((item, index) => (
                       <div key={index}><Editable><Item i={item} /></Editable></div>
                     ))}
+                    {editable && <Pencil abs onClick={() => onEdit?.('teacherInfo')} label={`${S.dialog.editBox}: ${S.teacherNotes}`} />}
                   </div>
                 </>
               )}
@@ -283,7 +306,7 @@ export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, cap
               </div>
             </div>
             <div className="lpc-col lpc-right">
-              {pageIndexes.map((index) => renderBox(boxes[index], index))}
+              {pageIndexes.map((index) => renderBox(boxes[index], index, editable))}
             </div>
           </div>
           <Footer

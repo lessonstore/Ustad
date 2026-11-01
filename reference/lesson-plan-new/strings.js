@@ -10,6 +10,15 @@ export const STRINGS = {
     assessment: 'Assessment', followUp: 'Follow-up',
     min: 'min', preparedBy: 'Prepared by',
     schoolLogo: 'School logo',
+    dialog: {
+      edit: 'Edit', addLine: 'Add line', addLabel: '+ label', label: 'Label (bold)', line: 'Text',
+      minutes: 'Minutes', ok: 'OK', cancel: 'Cancel', reset: 'Reset to original',
+      del: 'Delete', up: 'Move up', down: 'Move down', undo: 'Undo', saved: 'Changes saved',
+      tooLong: 'A box is taller than one page and will be cut off. Please shorten it.',
+      glance: 'At a glance', outcomes: 'Learning outcomes', materials: 'Materials',
+      banner: 'Heading', classLabel: 'Class', subject: 'Subject', domain: 'Domain', subDomain: 'Sub-domain', topic: 'Topic',
+      editBox: 'Edit',
+    },
     periods: (m, p) => `${m} min · ${p} period${p > 1 ? 's' : ''}`,
   },
   ur: {
@@ -22,6 +31,15 @@ export const STRINGS = {
     assessment: 'جائزہ', followUp: 'تکمیلی کام',
     min: 'منٹ', preparedBy: 'تیار کردہ:',
     schoolLogo: 'سکول کا لوگو',
+    dialog: {
+      edit: 'ترمیم', addLine: 'نئی سطر شامل کریں', addLabel: '+ عنوان', label: 'عنوان (نمایاں)', line: 'متن',
+      minutes: 'منٹ', ok: 'ٹھیک ہے', cancel: 'منسوخ', reset: 'اصل حالت بحال کریں',
+      del: 'حذف کریں', up: 'اوپر', down: 'نیچے', undo: 'واپس کریں', saved: 'تبدیلیاں محفوظ ہو گئیں',
+      tooLong: 'ایک باکس ایک صفحے سے لمبا ہے اور کٹ جائے گا۔ براہِ کرم اسے مختصر کریں۔',
+      glance: 'ایک نظر میں', outcomes: 'اکتسابی نتائج', materials: 'درکار سامان',
+      banner: 'سرخی', classLabel: 'جماعت', subject: 'مضمون', domain: 'ڈومین', subDomain: 'ذیلی ڈومین', topic: 'عنوان',
+      editBox: 'ترمیم',
+    },
     periods: (m, p) => `${m} منٹ · ${p} پیریڈ`,
   },
 };

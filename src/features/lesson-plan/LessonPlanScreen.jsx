@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { LessonPlanC } from "./index.js";
+import { LessonPlanEditor } from "./index.js";
 import { lessonEn, lessonUr } from "./sampleLessons.js";
 import InstallPrompt from "../../components/InstallPrompt.jsx";
 import { curriculumData } from "../../data/curriculumData.js";
@@ -43,6 +43,17 @@ export default function LessonPlanScreen() {
       ? requestedLessonNumber
       : 1;
   const lang = selectedBook?.language ?? "en";
+  const lessonId = `${selectedBook?.bookId ?? `sample-${lang}`}-${lessonNumber}`;
+  const lessonFromServer = {
+    ...(lang === "ur" ? lessonUr : lessonEn),
+    lessonNo: lessonNumber,
+    ...(selectedBook && {
+      classLabel:
+        lang === "ur"
+          ? urduGradeLabels[selectedBook.grade]
+          : selectedBook.grade,
+    }),
+  };
   const [logo, setLogo] = useState("sed");
   const [schoolName, setSchoolName] = useState(() =>
     readStoredValue(storageKeys.schoolName),
@@ -296,19 +307,18 @@ export default function LessonPlanScreen() {
                 height: `${previewContentHeight}px`,
               }}
             >
-              <LessonPlanC
+              <LessonPlanEditor
                 lang={lang}
-                lesson={{
-                  ...(lang === "ur" ? lessonUr : lessonEn),
-                  lessonNo: lessonNumber,
-                  ...(selectedBook && {
-                    classLabel:
-                      lang === "ur"
-                        ? urduGradeLabels[selectedBook.grade]
-                        : selectedBook.grade,
-                  }),
-                }}
+                lesson={lessonFromServer}
                 branding={branding}
+                storageKey={`plan-${lessonId}`}
+                onChange={(updatedLesson) => {
+                  window.dispatchEvent(
+                    new CustomEvent("ustad:lesson-plan-change", {
+                      detail: { lessonId, lesson: updatedLesson },
+                    }),
+                  );
+                }}
               />
             </div>
           </div>

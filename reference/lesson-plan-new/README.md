@@ -44,6 +44,21 @@ The component paginates itself, live, as the lesson text changes:
 - On each page the boxes share the free space evenly.
 Do not pass `page` / `pages` props any more; they are computed.
 
+## Editing (popup)
+
+Use `<LessonPlanEditor />` instead of `<LessonPlanC />` to let teachers edit:
+
+```jsx
+<LessonPlanEditor lang="en" lesson={lessonFromServer} branding={...} storageKey={`plan-${lessonId}`} onChange={saveToServer} />
+```
+
+- A pencil on every box (screen only, never printed) opens a popup with the box's full content.
+- Lines can be edited, added (+ Add line, or Enter), moved up/down, deleted; a line may have an optional bold label.
+- Timed boxes also have a Minutes field. Teacher notes, At a glance and the heading have their own popups.
+- OK saves and the pages re-arrange; an Undo message shows for 7 seconds. "Reset to original" refills the popup from the server lesson.
+- The edited copy is stored under `storageKey` (localStorage) and passed to `onChange`; the original server lesson is never modified.
+- A warning shows when a single box is taller than one page.
+
 ## Timing
 
 Introduction / Development / Conclusion / Assessment show minutes. Defaults: 30 min =
