@@ -4,7 +4,10 @@ import { lessonEn, lessonUr } from "./sampleLessons.js";
 import { useUser } from "../../context/UserContext.jsx";
 import InstallPrompt from "../../components/InstallPrompt.jsx";
 import { curriculumData } from "../../data/curriculumData.js";
-import { isMonthInActiveWindow } from "../../utils/monthUtils.js";
+import {
+  isMonthInActiveWindow,
+  isValidMonthFormat,
+} from "../../utils/monthUtils.js";
 import "./LessonPlanScreen.css";
 
 const storageKeys = {
@@ -34,6 +37,21 @@ function readStoredValue(key) {
 export default function LessonPlanScreen() {
   const { currentUser, userProfile, loading, signIn, authError, profileError } =
     useUser();
+  const [logo, setLogo] = useState("sed");
+  const [schoolName, setSchoolName] = useState(() =>
+    readStoredValue(storageKeys.schoolName),
+  );
+  const [teacherName, setTeacherName] = useState(() =>
+    readStoredValue(storageKeys.teacherName),
+  );
+  const [extraMargin, setExtraMargin] = useState("none");
+  const [schoolLogoUrl, setSchoolLogoUrl] = useState("");
+  const [zoomMode, setZoomMode] = useState("fit-width");
+  const [previewScale, setPreviewScale] = useState(1);
+  const [previewContentHeight, setPreviewContentHeight] = useState(pageHeightPx);
+  const previewViewportRef = useRef(null);
+  const previewScaleRef = useRef(null);
+
   const searchParams = new URLSearchParams(window.location.search);
   const requestedBookId = searchParams.get("bookId");
   const selectedBook = curriculumData
@@ -42,16 +60,19 @@ export default function LessonPlanScreen() {
     )
     .find(({ bookId }) => bookId === requestedBookId);
   const requestedLessonNumber = Number(searchParams.get("lessonNumber"));
+  const requestedMonthKey = searchParams.get("month");
   const lessonNumber =
     Number.isInteger(requestedLessonNumber) && requestedLessonNumber > 0
       ? requestedLessonNumber
       : 1;
   const lang = selectedBook?.language ?? "en";
-  const lessonId = `${selectedBook?.bookId ?? `sample-${lang}`}-${lessonNumber}`;
-  const now = new Date();
   const requestedLesson = selectedBook?.lessons.find(
     (lesson) => lesson.lessonNumber === lessonNumber,
   );
+  const lessonId =
+    requestedLesson?.id ??
+    `${selectedBook?.bookId ?? `sample-${lang}`}-${lessonNumber}`;
+  const now = new Date();
   const academicYearStart =
     now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
   const lessonMonth = selectedBook
@@ -70,10 +91,13 @@ export default function LessonPlanScreen() {
       : lessonMonthNumber >= 4
         ? academicYearStart
         : academicYearStart + 1;
-  const lessonMonthKey =
+  const scheduledLessonMonthKey =
     lessonMonthYear === null
       ? null
       : `${lessonMonthYear}-${String(lessonMonthNumber).padStart(2, "0")}`;
+  const lessonMonthKey = isValidMonthFormat(requestedMonthKey)
+    ? requestedMonthKey
+    : scheduledLessonMonthKey;
   const lessonIsAccessible =
     lessonNumber === 1 ||
     (Boolean(currentUser) &&
@@ -93,59 +117,6 @@ export default function LessonPlanScreen() {
           : selectedBook.grade,
     }),
   };
-  const [logo, setLogo] = useState("sed");
-  const [schoolName, setSchoolName] = useState(() =>
-    readStoredValue(storageKeys.schoolName),
-  );
-  const [teacherName, setTeacherName] = useState(() =>
-    readStoredValue(storageKeys.teacherName),
-  );
-  const [extraMargin, setExtraMargin] = useState("none");
-  const [schoolLogoUrl, setSchoolLogoUrl] = useState("");
-  const [zoomMode, setZoomMode] = useState("fit-width");
-  const [previewScale, setPreviewScale] = useState(1);
-  const [previewContentHeight, setPreviewContentHeight] = useState(pageHeightPx);
-  const previewViewportRef = useRef(null);
-  const previewScaleRef = useRef(null);
-
-  if (lessonNumber !== 1 && (loading || !lessonIsAccessible)) {
-    return (
-      <main className="grid min-h-screen place-items-center bg-slate-100 p-6 text-slate-900">
-        <section className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-sm">
-          <h1 className="text-xl font-semibold">Lesson access required</h1>
-          <p className="mt-3 text-sm text-slate-600">
-            {loading
-              ? "Checking your account access…"
-              : !currentUser
-                ? "Sign in and unlock this lesson from the catalog."
-                : profileError ||
-                  "This lesson is locked or outside the current two-month access window."}
-          </p>
-          {(authError || profileError) && (
-            <p className="mt-3 text-sm text-rose-700" role="alert">
-              {authError || profileError}
-            </p>
-          )}
-          {!currentUser && !loading && (
-            <button
-              className="mt-5 min-h-11 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white"
-              onClick={() => void signIn().catch(() => {})}
-              type="button"
-            >
-              Sign in with Google
-            </button>
-          )}
-          <a
-            className="mt-5 block text-sm font-medium text-indigo-700"
-            href="/"
-          >
-            Return to catalog
-          </a>
-        </section>
-      </main>
-    );
-  }
-
   useEffect(() => {
     const documentPreview =
       previewScaleRef.current?.querySelector(".lpc-doc");
@@ -228,6 +199,44 @@ export default function LessonPlanScreen() {
     },
     [schoolLogoUrl],
   );
+
+  if (lessonNumber !== 1 && (loading || !lessonIsAccessible)) {
+    return (
+      <main className="grid min-h-screen place-items-center bg-slate-100 p-6 text-slate-900">
+        <section className="w-full max-w-md rounded-2xl bg-white p-6 text-center shadow-sm">
+          <h1 className="text-xl font-semibold">Lesson access required</h1>
+          <p className="mt-3 text-sm text-slate-600">
+            {loading
+              ? "Checking your account access…"
+              : !currentUser
+                ? "Sign in and unlock this lesson from the catalog."
+                : profileError ||
+                  "This lesson is locked or outside the current two-month access window."}
+          </p>
+          {(authError || profileError) && (
+            <p className="mt-3 text-sm text-rose-700" role="alert">
+              {authError || profileError}
+            </p>
+          )}
+          {!currentUser && !loading && (
+            <button
+              className="mt-5 min-h-11 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white"
+              onClick={() => void signIn().catch(() => {})}
+              type="button"
+            >
+              Sign in with Google
+            </button>
+          )}
+          <a
+            className="mt-5 block text-sm font-medium text-indigo-700"
+            href="/"
+          >
+            Return to catalog
+          </a>
+        </section>
+      </main>
+    );
+  }
 
   function handleSchoolLogoChange(event) {
     const file = event.target.files?.[0];

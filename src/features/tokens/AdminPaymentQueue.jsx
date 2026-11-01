@@ -9,7 +9,9 @@ import {
   runTransaction,
   serverTimestamp,
   where,
+  writeBatch,
 } from "../../services/firebase.js";
+import grade8ScienceIndex from "../../data/grade8ScienceIndex.json";
 import { useUser } from "../../context/UserContext.jsx";
 import { isMonthInActiveWindow } from "../../utils/monthUtils.js";
 
@@ -25,6 +27,9 @@ export default function AdminPaymentQueue() {
   const [requests, setRequests] = useState([]);
   const [error, setError] = useState("");
   const [busyRequestId, setBusyRequestId] = useState("");
+  const [seedingLessons, setSeedingLessons] = useState(false);
+  const [seedMessage, setSeedMessage] = useState("");
+  const [seedError, setSeedError] = useState("");
 
   useEffect(() => {
     const pendingQuery = query(
@@ -152,17 +157,88 @@ export default function AdminPaymentQueue() {
     }
   }
 
+  async function seedScienceLessons() {
+    setSeedingLessons(true);
+    setSeedMessage("");
+    setSeedError("");
+
+    try {
+      for (let start = 0; start < grade8ScienceIndex.length; start += 450) {
+        const batch = writeBatch(db);
+        const chunk = grade8ScienceIndex.slice(start, start + 450);
+        for (const lesson of chunk) {
+          batch.set(doc(db, "lesson_indexes", lesson.id), {
+            id: lesson.id,
+            bookId: lesson.bookId,
+            lessonNumber: lesson.lessonNumber,
+            chapterNumber: lesson.chapterNumber,
+            chapterName: lesson.chapterName,
+            topic: lesson.topic,
+            homework: lesson.homework,
+            updatedAt: serverTimestamp(),
+          });
+        }
+        await batch.commit();
+      }
+
+      setSeedMessage(
+        `${grade8ScienceIndex.length} lessons successfully uploaded to Firestore!`,
+      );
+    } catch (seedError) {
+      console.error("Could not seed Grade 8 science lessons:", seedError);
+      setSeedError(
+        seedError.message || "Could not upload Grade 8 science lessons.",
+      );
+    } finally {
+      setSeedingLessons(false);
+    }
+  }
+
   return (
-    <section
-      aria-labelledby="admin-payment-queue"
-      className="mb-8 rounded-2xl border border-amber-200 bg-white p-4 shadow-sm sm:p-6"
-    >
-      <h2
-        className="text-lg font-semibold text-slate-900"
-        id="admin-payment-queue"
-      >
-        Pending payment requests
-      </h2>
+    <main className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900 sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-5xl">
+        <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
+          <h1 className="text-2xl font-semibold tracking-tight">
+            Pending payment requests
+          </h1>
+          <a
+            className="min-h-11 content-center rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50"
+            href="/"
+          >
+            Back to Catalog
+          </a>
+        </header>
+        <section
+          aria-labelledby="science-seed-title"
+          className="mb-6 rounded-2xl border border-indigo-200 bg-white p-4 shadow-sm sm:p-6"
+        >
+          <h2
+            className="text-lg font-semibold text-slate-900"
+            id="science-seed-title"
+          >
+            Admin tools
+          </h2>
+          <button
+            className="mt-4 min-h-11 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-60"
+            disabled={seedingLessons}
+            onClick={() => void seedScienceLessons()}
+            type="button"
+          >
+            {seedingLessons
+              ? "Uploading Grade 8 science lessons…"
+              : "Seed Grade 8 Science Lessons to Firestore"}
+          </button>
+          {seedMessage && (
+            <p className="mt-3 text-sm text-emerald-700" role="status">
+              {seedMessage}
+            </p>
+          )}
+          {seedError && (
+            <p className="mt-3 text-sm text-rose-700" role="alert">
+              {seedError}
+            </p>
+          )}
+        </section>
       {error && (
         <p className="mt-3 text-sm text-rose-700" role="alert">
           {error}
@@ -213,6 +289,7 @@ export default function AdminPaymentQueue() {
           ))}
         </ul>
       )}
-    </section>
+      </div>
+    </main>
   );
 }

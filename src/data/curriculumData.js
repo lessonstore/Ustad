@@ -1,3 +1,5 @@
+import grade8ScienceIndex from "./grade8ScienceIndex.json";
+
 const academicSchedule = {
   April: { startLesson: 1, endLesson: 12 },
   May: { startLesson: 13, endLesson: 24 },
@@ -94,16 +96,30 @@ export const curriculumData = ["Grade 4", "Grade 5", "Grade 6", "Grade 7", "Grad
       grade,
       books: subjects.map(({ id, language, medium, subject }) => {
         const mediumId = medium.toLowerCase().replace(" ", "-");
-        const bookId = `${gradeId}-${id}-${mediumId}`;
+        const isGrade8UrduScience =
+          grade === "Grade 8" && id === "science" && language === "ur";
+        const bookId = isGrade8UrduScience
+          ? "grade8-science"
+          : `${gradeId}-${id}-${mediumId}`;
+        const lessons = isGrade8UrduScience
+          ? grade8ScienceIndex.map((lesson) => ({
+              ...lesson,
+              title: lesson.topic,
+              isFreeSample: lesson.lessonNumber === 1,
+              tokenCost: lesson.lessonNumber === 1 ? 0 : 1,
+            }))
+          : createLessons(bookId);
 
         return {
           bookId,
-          subject,
+          subject: isGrade8UrduScience
+            ? "General Science (Urdu Medium)"
+            : subject,
           subjectName: subject,
           language,
           medium,
           academicSchedule: { ...academicSchedule },
-          lessons: createLessons(bookId),
+          lessons,
         };
       }),
     };

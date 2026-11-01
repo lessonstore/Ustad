@@ -36,6 +36,7 @@ import {
 
 const UserContext = createContext(null);
 const balanceMaps = ["tokens", "subscriptions", "unlockedLessons"];
+const adminEmail = "sirwaqarishaq@gmail.com";
 
 function makeDefaultProfile(user) {
   return {
@@ -148,7 +149,11 @@ export function UserProvider({ children }) {
         const tokenResult = await getIdTokenResult(user);
         if (!active || generation !== authGenerationRef.current) return;
         setUserProfile(profile);
-        setIsAdmin(tokenResult.claims.admin === true);
+        setIsAdmin(
+          tokenResult.claims.admin === true ||
+            (user.emailVerified &&
+              user.email?.toLowerCase() === adminEmail),
+        );
         profileUnsubscribeRef.current = onSnapshot(
           userRef,
           (profileSnapshot) => {

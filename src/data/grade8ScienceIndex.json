@@ -1,0 +1,947 @@
+[
+  {
+    "id": "grade8-sci-lesson-1",
+    "bookId": "grade8-science",
+    "lessonNumber": 1,
+    "chapterNumber": 1,
+    "chapterName": "اکالوجی (Ecology)",
+    "topic": "ماحولیاتی نظام (ایکو سسٹم) اور اس کے اجزاء (حیاتیاتی اور غیر حیاتیاتی)",
+    "homework": "ایکو سسٹم کے حیاتیاتی اور غیر حیاتیاتی اجزاء کی فہرست بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-2",
+    "bookId": "grade8-science",
+    "lessonNumber": 2,
+    "chapterNumber": 1,
+    "chapterName": "اکالوجی (Ecology)",
+    "topic": "ایکو سسٹم میں توانائی کا بہاؤ اور فوڈ چین (Food Chain)",
+    "homework": "خشکی کے ایکو سسٹم کی ایک سادہ فوڈ چین کا خاکہ بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-3",
+    "bookId": "grade8-science",
+    "lessonNumber": 3,
+    "chapterNumber": 1,
+    "chapterName": "اکالوجی (Ecology)",
+    "topic": "فوڈ ویب (Food Web) اور ٹرافک لیولز (Trophic Levels)",
+    "homework": "فوڈ ویب اور فوڈ چین کے درمیان بنیادی فرق تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-4",
+    "bookId": "grade8-science",
+    "lessonNumber": 4,
+    "chapterNumber": 1,
+    "chapterName": "اکالوجی (Ecology)",
+    "topic": "ایکولوجیکل پیرامڈز (Ecological Pyramids) اور ان کی اہمیت",
+    "homework": "پروڈیوسرز اور کنزیومرز کا ایکولوجیکل پیرامڈ بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-5",
+    "bookId": "grade8-science",
+    "lessonNumber": 5,
+    "chapterNumber": 1,
+    "chapterName": "اکالوجی (Ecology)",
+    "topic": "جانداروں کے باہمی تعلقات: پریڈیشن (Predation) اور کمپیٹیشن",
+    "homework": "شکاری اور شکار کے باہمی تعلق کی دو مثالیں لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-6",
+    "bookId": "grade8-science",
+    "lessonNumber": 6,
+    "chapterNumber": 1,
+    "chapterName": "اکالوجی (Ecology)",
+    "topic": "سمبیوسس (Symbiosis): میوچلزم اور کمنسلزم",
+    "homework": "میوچلزم اور کمنسلزم کی تعریف اور ایک ایک مثال تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-7",
+    "bookId": "grade8-science",
+    "lessonNumber": 7,
+    "chapterNumber": 1,
+    "chapterName": "اکالوجی (Ecology)",
+    "topic": "کاربن سائیکل اور ماحول میں کاربن ڈائی آکسائیڈ کا توازن",
+    "homework": "ماحول میں کاربن سائیکل کا لیبل شدہ خاکہ بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-8",
+    "bookId": "grade8-science",
+    "lessonNumber": 8,
+    "chapterNumber": 1,
+    "chapterName": "اکالوجی (Ecology)",
+    "topic": "آکسیجن سائیکل، گلوبل وارمنگ اور ایکو سسٹم میں بگاڑ کے اسباب",
+    "homework": "گلوبل وارمنگ کے اثرات پر مختصر نوٹ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-9",
+    "bookId": "grade8-science",
+    "lessonNumber": 9,
+    "chapterNumber": 2,
+    "chapterName": "انسانی نروس سسٹم (Human Nervous System)",
+    "topic": "انسانی نروس سسٹم کا تعارف اور ساخت",
+    "homework": "سینٹرل اور پیریفرل نروس سسٹم کے بنیادی حصے تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-10",
+    "bookId": "grade8-science",
+    "lessonNumber": 10,
+    "chapterNumber": 2,
+    "chapterName": "انسانی نروس سسٹم (Human Nervous System)",
+    "topic": "نیوران (عصبی سیل) کی ساخت: سیل باڈی، ڈینڈرائٹس اور ایکسون",
+    "homework": "نیوران کی ڈایاگرام بنا کر اس کے اہم حصوں کو لیبل کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-11",
+    "bookId": "grade8-science",
+    "lessonNumber": 11,
+    "chapterNumber": 2,
+    "chapterName": "انسانی نروس سسٹم (Human Nervous System)",
+    "topic": "نیورانز کی اقسام: سینسری، موٹر اور انٹر نیورانز",
+    "homework": "تینوں اقسام کے نیورانز کے افعال کا موازنہ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-12",
+    "bookId": "grade8-science",
+    "lessonNumber": 12,
+    "chapterNumber": 2,
+    "chapterName": "انسانی نروس سسٹم (Human Nervous System)",
+    "topic": "نرو امپلس اور جسم میں پیغامات کی ترسیل کا طریقہ",
+    "homework": "پیغامات کی ترسیل کے راستے کا فلو چارٹ بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-13",
+    "bookId": "grade8-science",
+    "lessonNumber": 13,
+    "chapterNumber": 2,
+    "chapterName": "انسانی نروس سسٹم (Human Nervous System)",
+    "topic": "سینٹرل نروس سسٹم: برین (Brain) کی ساخت اور فور برین کے افعال",
+    "homework": "سیری برم اور تھیلامس کے اہم کام کاپی پر لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-14",
+    "bookId": "grade8-science",
+    "lessonNumber": 14,
+    "chapterNumber": 2,
+    "chapterName": "انسانی نروس سسٹم (Human Nervous System)",
+    "topic": "مڈ برین اور ہائنڈ برین (سیری بیلم، پونز، میڈولا اوبلانگیٹا) کے افعال",
+    "homework": "ہائنڈ برین کے تینوں حصوں کے افعال کی فہرست بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-15",
+    "bookId": "grade8-science",
+    "lessonNumber": 15,
+    "chapterNumber": 2,
+    "chapterName": "انسانی نروس سسٹم (Human Nervous System)",
+    "topic": "ارادی افعال (Voluntary Actions) اور غیر ارادی افعال (Involuntary Actions)",
+    "homework": "روزمرہ زندگی سے ارادی اور غیر ارادی افعال کی تین تین مثالیں دیں"
+  },
+  {
+    "id": "grade8-sci-lesson-16",
+    "bookId": "grade8-science",
+    "lessonNumber": 16,
+    "chapterNumber": 2,
+    "chapterName": "انسانی نروس سسٹم (Human Nervous System)",
+    "topic": "ریفلیکس ایکشن (Reflex Action) اور ریفلیکس آرک کا عمل",
+    "homework": "ریفلیکس آرک کے مختلف مراحل کا خاکہ بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-17",
+    "bookId": "grade8-science",
+    "lessonNumber": 17,
+    "chapterNumber": 3,
+    "chapterName": "وراثتی تبدیلیاں اور سیل کی تقسیم (Variation, Heredity and Cell Division)",
+    "topic": "وراثت (Heredity) کا تعارف اور والدین سے بچوں میں خصوصیات کی منتقلی",
+    "homework": "وراثتی اور غیر وراثتی خصوصیات کے دو دو نمونے لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-18",
+    "bookId": "grade8-science",
+    "lessonNumber": 18,
+    "chapterNumber": 3,
+    "chapterName": "وراثتی تبدیلیاں اور سیل کی تقسیم (Variation, Heredity and Cell Division)",
+    "topic": "جینز (Genes) اور کروموسومز (Chromosomes) کا کردار",
+    "homework": "جینز اور کروموسومز کے باہمی تعلق کی وضاحت کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-19",
+    "bookId": "grade8-science",
+    "lessonNumber": 19,
+    "chapterNumber": 3,
+    "chapterName": "وراثتی تبدیلیاں اور سیل کی تقسیم (Variation, Heredity and Cell Division)",
+    "topic": "ڈی این اے (DNA) کی ساخت اور اس کے اجزاء",
+    "homework": "ڈی این اے کے ڈبل ہیلکس ماڈل کا خاکہ بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-20",
+    "bookId": "grade8-science",
+    "lessonNumber": 20,
+    "chapterNumber": 3,
+    "chapterName": "وراثتی تبدیلیاں اور سیل کی تقسیم (Variation, Heredity and Cell Division)",
+    "topic": "جینیاتی تبدیلیاں (Genetic Variations) اور ماحولیاتی تبدیلیاں",
+    "homework": "مسلسل اور غیر مسلسل تغیرات کی ایک ایک مثال لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-21",
+    "bookId": "grade8-science",
+    "lessonNumber": 21,
+    "chapterNumber": 3,
+    "chapterName": "وراثتی تبدیلیاں اور سیل کی تقسیم (Variation, Heredity and Cell Division)",
+    "topic": "ماحول سے مطابقت (Adaptations) اور جانداروں کی بقا",
+    "homework": "صحرا اور برفانی علاقوں کے جانوروں کی مطابقت پر نوٹ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-22",
+    "bookId": "grade8-science",
+    "lessonNumber": 22,
+    "chapterNumber": 3,
+    "chapterName": "وراثتی تبدیلیاں اور سیل کی تقسیم (Variation, Heredity and Cell Division)",
+    "topic": "سیل کی تقسیم (Cell Division) کا تعارف اور انٹر فیز کا مرحلہ",
+    "homework": "سیل ڈویژن کی ضرورت اور اہمیت تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-23",
+    "bookId": "grade8-science",
+    "lessonNumber": 23,
+    "chapterNumber": 3,
+    "chapterName": "وراثتی تبدیلیاں اور سیل کی تقسیم (Variation, Heredity and Cell Division)",
+    "topic": "مائی ٹوسس (Mitosis) کے مراحل اور اس کی اہمیت",
+    "homework": "مائی ٹوسس کے بنیادی مراحل کے نام ترتیب سے لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-24",
+    "bookId": "grade8-science",
+    "lessonNumber": 24,
+    "chapterNumber": 3,
+    "chapterName": "وراثتی تبدیلیاں اور سیل کی تقسیم (Variation, Heredity and Cell Division)",
+    "topic": "می اوسس (Meiosis) کے مراحل اور اس کی اہمیت",
+    "homework": "گیمیٹس بننے میں می اوسس کا کردار واضح کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-25",
+    "bookId": "grade8-science",
+    "lessonNumber": 25,
+    "chapterNumber": 3,
+    "chapterName": "وراثتی تبدیلیاں اور سیل کی تقسیم (Variation, Heredity and Cell Division)",
+    "topic": "مائی ٹوسس اور می اوسس کے درمیان فرق اور زائیگوٹ کا بننا",
+    "homework": "مائی ٹوسس اور می اوسس کے درمیان فرق کا ٹیبل مکمل کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-26",
+    "bookId": "grade8-science",
+    "lessonNumber": 26,
+    "chapterNumber": 4,
+    "chapterName": "بائیو ٹیکنالوجی (Biotechnology)",
+    "topic": "بائیو ٹیکنالوجی کا تعارف اور اس کا بنیادی تصور",
+    "homework": "بائیو ٹیکنالوجی کی تعریف اور روزمرہ زندگی میں اس کا کردار لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-27",
+    "bookId": "grade8-science",
+    "lessonNumber": 27,
+    "chapterNumber": 4,
+    "chapterName": "بائیو ٹیکنالوجی (Biotechnology)",
+    "topic": "ڈی این اے کی ریپلیکیشن اور پلازمڈ (Plasmid) کا کردار",
+    "homework": "بیکٹیریل سیل میں پلازمڈ کا کام تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-28",
+    "bookId": "grade8-science",
+    "lessonNumber": 28,
+    "chapterNumber": 4,
+    "chapterName": "بائیو ٹیکنالوجی (Biotechnology)",
+    "topic": "جینیٹک انجینئرنگ اور ریکومبیننٹ ڈی این اے ٹیکنالوجی",
+    "homework": "ریکومبیننٹ ڈی این اے بنانے کے مراحل کا خاکہ بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-29",
+    "bookId": "grade8-science",
+    "lessonNumber": 29,
+    "chapterNumber": 4,
+    "chapterName": "بائیو ٹیکنالوجی (Biotechnology)",
+    "topic": "جینیٹکلی موڈیفائیڈ بیکٹیریا (GM Bacteria) کی تیاری کا طریقہ",
+    "homework": "جی ایم بیکٹیریا کی تیاری کا طریقہ کار مختصر لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-30",
+    "bookId": "grade8-science",
+    "lessonNumber": 30,
+    "chapterNumber": 4,
+    "chapterName": "بائیو ٹیکنالوجی (Biotechnology)",
+    "topic": "زراعت میں بائیو ٹیکنالوجی کا استعمال اور فصلوں کی بہتری",
+    "homework": "کیڑوں سے محفوظ فصلوں کی تیاری پر نوٹ تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-31",
+    "bookId": "grade8-science",
+    "lessonNumber": 31,
+    "chapterNumber": 4,
+    "chapterName": "بائیو ٹیکنالوجی (Biotechnology)",
+    "topic": "صحت کے شعبے میں بائیو ٹیکنالوجی: انسولین کی تیاری",
+    "homework": "انسولین کی تیاری کے اہم مراحل کی فہرست بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-32",
+    "bookId": "grade8-science",
+    "lessonNumber": 32,
+    "chapterNumber": 4,
+    "chapterName": "بائیو ٹیکنالوجی (Biotechnology)",
+    "topic": "بیماریوں سے بچاؤ کے لیے ویکسینز اور انٹرفیرون کی تیاری",
+    "homework": "ویکسین کس طرح مدافعتی نظام کو متحرک کرتی ہے؟ وضاحت کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-33",
+    "bookId": "grade8-science",
+    "lessonNumber": 33,
+    "chapterNumber": 4,
+    "chapterName": "بائیو ٹیکنالوجی (Biotechnology)",
+    "topic": "خوراک کی تیاری اور تحفظ میں بائیو ٹیکنالوجی (دہی، پنیر، ڈبل روٹی)",
+    "homework": "فرمنٹیشن کے عمل میں مائیکرو آرگنائزمز کا کردار لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-34",
+    "bookId": "grade8-science",
+    "lessonNumber": 34,
+    "chapterNumber": 4,
+    "chapterName": "بائیو ٹیکنالوجی (Biotechnology)",
+    "topic": "ماحولیاتی مسائل کا حل اور بائیو پیسٹیسائیڈز",
+    "homework": "بائیو پیسٹیسائیڈز کے کیمیائی ادویات پر فوائد تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-35",
+    "bookId": "grade8-science",
+    "lessonNumber": 35,
+    "chapterNumber": 5,
+    "chapterName": "پیریاڈک ٹیبل (Periodic Table)",
+    "topic": "پیریاڈک ٹیبل کا تعارف اور عناصر کی ترتیب کا تاریخی پس منظر",
+    "homework": "پیریاڈک لا کی تعریف اور اٹامک نمبر کی بنیاد واضح کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-36",
+    "bookId": "grade8-science",
+    "lessonNumber": 36,
+    "chapterNumber": 5,
+    "chapterName": "پیریاڈک ٹیبل (Periodic Table)",
+    "topic": "پیریاڈک ٹیبل میں گروپس (Groups) اور پیریڈز (Periods) کی ساخت",
+    "homework": "گروپس اور پیریڈز کی تعداد اور سمت کاپی پر لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-37",
+    "bookId": "grade8-science",
+    "lessonNumber": 37,
+    "chapterNumber": 5,
+    "chapterName": "پیریاڈک ٹیبل (Periodic Table)",
+    "topic": "پہلے 18 عناصر کے نام، علامات اور اٹامک نمبرز",
+    "homework": "پہلے 18 عناصر کا چارٹ بنا کر علامات یاد کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-38",
+    "bookId": "grade8-science",
+    "lessonNumber": 38,
+    "chapterNumber": 5,
+    "chapterName": "پیریاڈک ٹیبل (Periodic Table)",
+    "topic": "عناصر کی الیکٹرانک کنفیگریشن اور ویلنس شیل الیکٹرانز",
+    "homework": "سوڈیم اور کلورین کے ایٹموں کی الیکٹرانک ساخت بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-39",
+    "bookId": "grade8-science",
+    "lessonNumber": 39,
+    "chapterNumber": 5,
+    "chapterName": "پیریاڈک ٹیبل (Periodic Table)",
+    "topic": "دھاتوں (Metals) کی طبعی اور کیمیائی خصوصیات",
+    "homework": "دھاتوں کی چمک، موصلیت اور لچک پر تین اہم نکات لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-40",
+    "bookId": "grade8-science",
+    "lessonNumber": 40,
+    "chapterNumber": 5,
+    "chapterName": "پیریاڈک ٹیبل (Periodic Table)",
+    "topic": "غیر دھاتوں (Non-metals) کی طبعی اور کیمیائی خصوصیات",
+    "homework": "دھاتوں اور غیر دھاتوں کی خصوصیات کا تقابلی جائزہ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-41",
+    "bookId": "grade8-science",
+    "lessonNumber": 41,
+    "chapterNumber": 5,
+    "chapterName": "پیریاڈک ٹیبل (Periodic Table)",
+    "topic": "دھاتوں کی خصوصیات کا ان کے روزمرہ استعمالات سے تعلق",
+    "homework": "کاپر اور ایلومینیم کے برقی اور گھریلو استعمالات لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-42",
+    "bookId": "grade8-science",
+    "lessonNumber": 42,
+    "chapterNumber": 5,
+    "chapterName": "پیریاڈک ٹیبل (Periodic Table)",
+    "topic": "ایلوائے (Alloys) کا بننا اور ان کی اہمیت (براس اور جرمن سلور)",
+    "homework": "ایلوائے کی تعریف اور براس کے اجزاء کے نام لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-43",
+    "bookId": "grade8-science",
+    "lessonNumber": 43,
+    "chapterNumber": 6,
+    "chapterName": "کیمیائی تعاملات (Chemical Reactions)",
+    "topic": "کیمیائی تعاملات کی شناخت، تعامل کنندگان اور حاصلات",
+    "homework": "ری ایکٹنٹس اور پروڈکٹس کی دو مختلف مساواتوں سے شناخت کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-44",
+    "bookId": "grade8-science",
+    "lessonNumber": 44,
+    "chapterNumber": 6,
+    "chapterName": "کیمیائی تعاملات (Chemical Reactions)",
+    "topic": "کیمیائی مساوات کا تعارف اور اسے ظاہر کرنے کی علامتیں",
+    "homework": "ٹھوس، مائع اور گیس کو ظاہر کرنے والی علامتیں لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-45",
+    "bookId": "grade8-science",
+    "lessonNumber": 45,
+    "chapterNumber": 6,
+    "chapterName": "کیمیائی تعاملات (Chemical Reactions)",
+    "topic": "ماس کے کنزرویشن کے قانون (Law of Conservation of Mass) کی وضاحت",
+    "homework": "قانون بقائے ماس کا بیان اور مفہوم تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-46",
+    "bookId": "grade8-science",
+    "lessonNumber": 46,
+    "chapterNumber": 6,
+    "chapterName": "کیمیائی تعاملات (Chemical Reactions)",
+    "topic": "ماس کے کنزرویشن کے قانون کی تجرباتی تصدیق",
+    "homework": "کیمیائی عمل سے پہلے اور بعد کے وزن کے موازنے کا نوٹ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-47",
+    "bookId": "grade8-science",
+    "lessonNumber": 47,
+    "chapterNumber": 6,
+    "chapterName": "کیمیائی تعاملات (Chemical Reactions)",
+    "topic": "کیمیائی مساوات کو متوازن کرنے کا طریقہ (Trial & Error Method)",
+    "homework": "کتاب کی مشق سے دو مساواتیں متوازن کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-48",
+    "bookId": "grade8-science",
+    "lessonNumber": 48,
+    "chapterNumber": 6,
+    "chapterName": "کیمیائی تعاملات (Chemical Reactions)",
+    "topic": "ترکیبی تعاملات (Combination Reactions) اور مثالیں",
+    "homework": "ترکیبی تعامل کی دو مساواتیں تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-49",
+    "bookId": "grade8-science",
+    "lessonNumber": 49,
+    "chapterNumber": 6,
+    "chapterName": "کیمیائی تعاملات (Chemical Reactions)",
+    "topic": "تحلیلی تعاملات (Decomposition Reactions) اور مثالیں",
+    "homework": "کیلشیم کاربونیٹ کے ٹوٹنے کی کیمیائی مساوات لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-50",
+    "bookId": "grade8-science",
+    "lessonNumber": 50,
+    "chapterNumber": 6,
+    "chapterName": "کیمیائی تعاملات (Chemical Reactions)",
+    "topic": "ہٹاؤ کے تعاملات (Displacement Reactions) اور دوہرے ہٹاؤ کے تعاملات",
+    "homework": "سنگل اور ڈبل ڈسپلیسمنٹ تعاملات کی تعریف کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-51",
+    "bookId": "grade8-science",
+    "lessonNumber": 51,
+    "chapterNumber": 6,
+    "chapterName": "کیمیائی تعاملات (Chemical Reactions)",
+    "topic": "ایکزوتھرمک اور اینڈوتھرمک تعاملات کی تعریف اور اہمیت",
+    "homework": "حرارت خارج اور جذب کرنے والے دو دو تعاملات لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-52",
+    "bookId": "grade8-science",
+    "lessonNumber": 52,
+    "chapterNumber": 6,
+    "chapterName": "کیمیائی تعاملات (Chemical Reactions)",
+    "topic": "کیمیائی بانڈ کا تعارف، آیونک بانڈ اور کوویلنٹ بانڈ کے بننے کا عمل و خاکے",
+    "homework": "NaCl میں آیونک بانڈ اور H2O میں کوویلنٹ بانڈ کا خاکہ بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-53",
+    "bookId": "grade8-science",
+    "lessonNumber": 53,
+    "chapterNumber": 7,
+    "chapterName": "تیزاب، اساس اور نمکیات (Acids, Bases and Salts)",
+    "topic": "تیزاب (Acids) کی تعریف، قدرتی ذرائع اور طبعی خصوصیات",
+    "homework": "تین قدرتی تیزابوں اور ان کے ذرائع کے نام لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-54",
+    "bookId": "grade8-science",
+    "lessonNumber": 54,
+    "chapterNumber": 7,
+    "chapterName": "تیزاب، اساس اور نمکیات (Acids, Bases and Salts)",
+    "topic": "منرل ایسڈز اور تیزابوں کی کیمیائی خصوصیات (دھاتوں سے تعامل)",
+    "homework": "زنک اور ہائیڈروکلورک ایسڈ کے تعامل کی مساوات لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-55",
+    "bookId": "grade8-science",
+    "lessonNumber": 55,
+    "chapterNumber": 7,
+    "chapterName": "تیزاب، اساس اور نمکیات (Acids, Bases and Salts)",
+    "topic": "اساس / الکلی (Bases / Alkalis) کی تعریف اور طبعی و کیمیائی خصوصیات",
+    "homework": "اساس اور الکلی کے درمیان فرق واضح کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-56",
+    "bookId": "grade8-science",
+    "lessonNumber": 56,
+    "chapterNumber": 7,
+    "chapterName": "تیزاب، اساس اور نمکیات (Acids, Bases and Salts)",
+    "topic": "انڈیکیٹرز (Indicators) کی تعریف اور لیبارٹری انڈیکیٹرز کا رنگ بدلنا",
+    "homework": "لٹمس پیپر کا تیزاب اور اساس میں رنگ کا جدول بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-57",
+    "bookId": "grade8-science",
+    "lessonNumber": 57,
+    "chapterNumber": 7,
+    "chapterName": "تیزاب، اساس اور نمکیات (Acids, Bases and Salts)",
+    "topic": "قدرتی انڈیکیٹرز (ہلدی اور سرخ بند گوبھی) کے ذریعے تجرباتی مشق",
+    "homework": "ہلدی کے پیسٹ سے صابن کے محلول کی جانچ کا طریقہ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-58",
+    "bookId": "grade8-science",
+    "lessonNumber": 58,
+    "chapterNumber": 7,
+    "chapterName": "تیزاب، اساس اور نمکیات (Acids, Bases and Salts)",
+    "topic": "پی ایچ اسکیل (pH Scale) کا تعارف، ساخت اور محلول کی طاقت ماپنا",
+    "homework": "نیوٹرل، تیزابی اور اساسی پی ایچ رینج تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-59",
+    "bookId": "grade8-science",
+    "lessonNumber": 59,
+    "chapterNumber": 7,
+    "chapterName": "تیزاب، اساس اور نمکیات (Acids, Bases and Salts)",
+    "topic": "عمل تعدیل (Neutralization Reaction) کا تعارف اور کیمیائی مساوات",
+    "homework": "تیزاب اور اساس کے ملاپ سے نمک بننے کی عمومی مساوات لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-60",
+    "bookId": "grade8-science",
+    "lessonNumber": 60,
+    "chapterNumber": 7,
+    "chapterName": "تیزاب، اساس اور نمکیات (Acids, Bases and Salts)",
+    "topic": "روزمرہ زندگی میں عمل تعدیل کی مثالیں (معدے کی تیزابیت، ڈنک کا علاج)",
+    "homework": "شہد کی مکھی کے ڈنک کے گھریلو علاج کی سائنسی وجہ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-61",
+    "bookId": "grade8-science",
+    "lessonNumber": 61,
+    "chapterNumber": 7,
+    "chapterName": "تیزاب، اساس اور نمکیات (Acids, Bases and Salts)",
+    "topic": "نمکیات (Salts) کی تعریف، خصوصیات، اور روزمرہ زندگی و صنعت میں استعمالات",
+    "homework": "کھانے کے نمک اور بیکنگ سوڈا کے استعمالات کی فہرست بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-62",
+    "bookId": "grade8-science",
+    "lessonNumber": 62,
+    "chapterNumber": 8,
+    "chapterName": "فورس اور پریشر (Force and Pressure)",
+    "topic": "متوازن فورسز (Balanced Forces) کی شناخت اور ان کے اثرات",
+    "homework": "متوازن فورسز کی دو حقیقی مثالیں تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-63",
+    "bookId": "grade8-science",
+    "lessonNumber": 63,
+    "chapterNumber": 8,
+    "chapterName": "فورس اور پریشر (Force and Pressure)",
+    "topic": "غیر متوازن فورسز (Unbalanced Forces) اور جسم کی حرکت پر اثر",
+    "homework": "غیر متوازن فورس جسم کی رفتار اور سمت کیسے بدلتی ہے؟ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-64",
+    "bookId": "grade8-science",
+    "lessonNumber": 64,
+    "chapterNumber": 8,
+    "chapterName": "فورس اور پریشر (Force and Pressure)",
+    "topic": "ڈینسٹی (Density) کا تعارف، فارمولا اور اکائی",
+    "homework": "ڈینسٹی معلوم کرنے کا حسابی فارمولا اور ایس آئی یونٹ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-65",
+    "bookId": "grade8-science",
+    "lessonNumber": 65,
+    "chapterNumber": 8,
+    "chapterName": "فورس اور پریشر (Force and Pressure)",
+    "topic": "ڈینسٹی کی بنیاد پر اشیاء کے پانی میں تیرنے اور ڈوبنے کے اصول",
+    "homework": "لوہے کی سوئی کیوں ڈوبتی ہے اور بحری جہاز کیوں تیرتا ہے؟ وضاحت کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-66",
+    "bookId": "grade8-science",
+    "lessonNumber": 66,
+    "chapterNumber": 8,
+    "chapterName": "فورس اور پریشر (Force and Pressure)",
+    "topic": "پریشر (Pressure) کی تعریف، فارمولا اور اس کا فورس و ایریا سے تعلق",
+    "homework": "ایریا کم ہونے سے پریشر پر کیا اثر پڑتا ہے؟ ایک مثال دیں"
+  },
+  {
+    "id": "grade8-sci-lesson-67",
+    "bookId": "grade8-science",
+    "lessonNumber": 67,
+    "chapterNumber": 8,
+    "chapterName": "فورس اور پریشر (Force and Pressure)",
+    "topic": "مائع کا پریشر (Hydrostatic Pressure) اور گہرائی کے ساتھ اس میں تبدیلی",
+    "homework": "پانی کی گہرائی اور پریشر کے تعلق کی ڈایاگرام بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-68",
+    "bookId": "grade8-science",
+    "lessonNumber": 68,
+    "chapterNumber": 8,
+    "chapterName": "فورس اور پریشر (Force and Pressure)",
+    "topic": "ہوا کا پریشر (Atmospheric Pressure) اور بلندی پر اس میں کمی",
+    "homework": "پہاڑوں پر ہوا کا دباؤ کم ہونے کی وجہ تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-69",
+    "bookId": "grade8-science",
+    "lessonNumber": 69,
+    "chapterNumber": 8,
+    "chapterName": "فورس اور پریشر (Force and Pressure)",
+    "topic": "ہائیڈرولک ایلیویٹر (Hydraulic Elevator) کے کام کرنے کا اصول",
+    "homework": "پاسکل کے قانون اور ہائیڈرولک سسٹم کا بنیادی اصول لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-70",
+    "bookId": "grade8-science",
+    "lessonNumber": 70,
+    "chapterNumber": 8,
+    "chapterName": "فورس اور پریشر (Force and Pressure)",
+    "topic": "ہوا کے پریشر کی پریکٹیکل ایپلیکیشنز اور راکٹ ماڈل بنانے کی مشق",
+    "homework": "سرنج اور ڈراپر میں ہوا کے دباؤ کے اصول پر مختصر نوٹ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-71",
+    "bookId": "grade8-science",
+    "lessonNumber": 71,
+    "chapterNumber": 9,
+    "chapterName": "روشنی اور اس کے مظاہر (Reflection and Refraction of Light)",
+    "topic": "روشنی کی بنیادی خصوصیات، رفتار اور شفاف میڈیمز میں ترسیل",
+    "homework": "روشنی کی رفتار مختلف واسطوں میں کیسی ہوتی ہے؟ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-72",
+    "bookId": "grade8-science",
+    "lessonNumber": 72,
+    "chapterNumber": 9,
+    "chapterName": "روشنی اور اس کے مظاہر (Reflection and Refraction of Light)",
+    "topic": "ریفلیکشن (Reflection) کی تعریف اور پلین مرر سے امیج بننے کا طریقہ",
+    "homework": "پلین مرر میں بننے والے امیج کی تین خصوصیات لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-73",
+    "bookId": "grade8-science",
+    "lessonNumber": 73,
+    "chapterNumber": 9,
+    "chapterName": "روشنی اور اس کے مظاہر (Reflection and Refraction of Light)",
+    "topic": "ریفلیکشن کے قوانین (Laws of Reflection)",
+    "homework": "زاویہ وقوع اور زاویہ انعکاس کا مساواتی تعلق خاکے سے ظاہر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-74",
+    "bookId": "grade8-science",
+    "lessonNumber": 74,
+    "chapterNumber": 9,
+    "chapterName": "روشنی اور اس کے مظاہر (Reflection and Refraction of Light)",
+    "topic": "روشنی کی ریفریکشن (Refraction of Light) کی تعریف اور اسباب",
+    "homework": "جب روشنی ایک میڈیم سے دوسرے میں جاتی ہے تو کیوں مڑتی ہے؟"
+  },
+  {
+    "id": "grade8-sci-lesson-75",
+    "bookId": "grade8-science",
+    "lessonNumber": 75,
+    "chapterNumber": 9,
+    "chapterName": "روشنی اور اس کے مظاہر (Reflection and Refraction of Light)",
+    "topic": "روزمرہ زندگی میں ریفریکشن کی مثالیں (پنسل کا مڑنا، ستاروں کا ٹمٹمانا)",
+    "homework": "پانی میں رکھی پنسل کے مڑے ہوئے نظر آنے کی سائنسی وجہ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-76",
+    "bookId": "grade8-science",
+    "lessonNumber": 76,
+    "chapterNumber": 9,
+    "chapterName": "روشنی اور اس کے مظاہر (Reflection and Refraction of Light)",
+    "topic": "روشنی کا بکھرنا (Dispersion of Light) اور پرزم سے سپیکٹرم بننا",
+    "homework": "پرزم سے بننے والے سپیکٹرم کے ساتوں رنگوں کے نام ترتیب سے لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-77",
+    "bookId": "grade8-science",
+    "lessonNumber": 77,
+    "chapterNumber": 9,
+    "chapterName": "روشنی اور اس کے مظاہر (Reflection and Refraction of Light)",
+    "topic": "قوس قزح (Rainbow) کے بننے کا قدرتی عمل",
+    "homework": "بارش کے قطروں میں روشنی کے انعطاف اور بکھراؤ کا خاکہ بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-78",
+    "bookId": "grade8-science",
+    "lessonNumber": 78,
+    "chapterNumber": 9,
+    "chapterName": "روشنی اور اس کے مظاہر (Reflection and Refraction of Light)",
+    "topic": "سفیریکل مررز (Spherical Mirrors): کنکیو اور کانویکس مررز",
+    "homework": "کنکیو اور کانویکس مررز کی اندرونی و بیرونی سطح کا فرق لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-79",
+    "bookId": "grade8-science",
+    "lessonNumber": 79,
+    "chapterNumber": 9,
+    "chapterName": "روشنی اور اس کے مظاہر (Reflection and Refraction of Light)",
+    "topic": "سفیریکل مررز سے امیجز کی خصوصیات اور روزمرہ زندگی میں استعمالات",
+    "homework": "گاڑیوں کے سائیڈ مرر میں کانویکس مرر کیوں لگایا جاتا ہے؟ وجہ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-80",
+    "bookId": "grade8-science",
+    "lessonNumber": 80,
+    "chapterNumber": 10,
+    "chapterName": "الیکٹریسٹی اور میگنیٹزم (Electricity and Magnetism)",
+    "topic": "الیکٹرک کرنٹ، وولٹیج اور رزسٹنس کا تعارف",
+    "homework": "کرنٹ، وولٹیج اور رزسٹنس کی اکائیاں اور علامتیں تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-81",
+    "bookId": "grade8-science",
+    "lessonNumber": 81,
+    "chapterNumber": 10,
+    "chapterName": "الیکٹریسٹی اور میگنیٹزم (Electricity and Magnetism)",
+    "topic": "اوہم کا قانون (Ohm's Law) اور کرنٹ، وولٹیج و رزسٹنس کا باہمی تعلق",
+    "homework": "V = IR فارمولے کی وضاحت کریں اور ایک سادہ حسابی سوال حل کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-82",
+    "bookId": "grade8-science",
+    "lessonNumber": 82,
+    "chapterNumber": 10,
+    "chapterName": "الیکٹریسٹی اور میگنیٹزم (Electricity and Magnetism)",
+    "topic": "الیکٹرک پاور (Electric Power) اور اس کی اکائی (واٹ)",
+    "homework": "الیکٹرک پاور کی تعریف اور واٹ و کلو واٹ کا تعلق لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-83",
+    "bookId": "grade8-science",
+    "lessonNumber": 83,
+    "chapterNumber": 10,
+    "chapterName": "الیکٹریسٹی اور میگنیٹزم (Electricity and Magnetism)",
+    "topic": "بجلی کی پیمائش اور کلو واٹ آور (kWh / یونٹ) کا حساب",
+    "homework": "ایک پنکھا اور بلب چلانے پر بجلی کے یونٹس معلوم کرنے کا فارمولا لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-84",
+    "bookId": "grade8-science",
+    "lessonNumber": 84,
+    "chapterNumber": 10,
+    "chapterName": "الیکٹریسٹی اور میگنیٹزم (Electricity and Magnetism)",
+    "topic": "برقی سرکٹس کے خطرات: اوور لوڈنگ اور شارٹ سرکٹ",
+    "homework": "اوور لوڈنگ اور شارٹ سرکٹ کی تعریف اور نقصانات تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-85",
+    "bookId": "grade8-science",
+    "lessonNumber": 85,
+    "chapterNumber": 10,
+    "chapterName": "الیکٹریسٹی اور میگنیٹزم (Electricity and Magnetism)",
+    "topic": "حفاظتی آلات: ارتھ وائر، فیوز اور سرکٹ بریکر کے فوائد",
+    "homework": "فیوز اور سرکٹ بریکر کے کام کرنے کے طریقے کا موازنہ کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-86",
+    "bookId": "grade8-science",
+    "lessonNumber": 86,
+    "chapterNumber": 10,
+    "chapterName": "الیکٹریسٹی اور میگنیٹزم (Electricity and Magnetism)",
+    "topic": "بجلی کے محفوظ استعمال کے لیے احتیاطی تدابیر",
+    "homework": "گھروں میں بجلی کے محفوظ استعمال کے لیے چار احتیاطی تدابیر لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-87",
+    "bookId": "grade8-science",
+    "lessonNumber": 87,
+    "chapterNumber": 10,
+    "chapterName": "الیکٹریسٹی اور میگنیٹزم (Electricity and Magnetism)",
+    "topic": "الیکٹرو میگنیٹ کی طاقت، عوامل اور اسپیکر کے کام کرنے کا اصول",
+    "homework": "الیکٹرو میگنیٹ کی طاقت بڑھانے کے تین طریقے کاپی پر لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-88",
+    "bookId": "grade8-science",
+    "lessonNumber": 88,
+    "chapterNumber": 11,
+    "chapterName": "روزمرہ زندگی میں ٹیکنالوجی (Technology in Everyday Life)",
+    "topic": "بائیو ٹیکنالوجی کی مدد سے بائیو پلاسٹک (Bioplastic) تیار کرنے کا طریقہ",
+    "homework": "کارن سٹارچ سے بائیو پلاسٹک بنانے کے بنیادی مراحل لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-89",
+    "bookId": "grade8-science",
+    "lessonNumber": 89,
+    "chapterNumber": 11,
+    "chapterName": "روزمرہ زندگی میں ٹیکنالوجی (Technology in Everyday Life)",
+    "topic": "تیزاب اور اساس کے استعمال سے ٹوتھ پیسٹ بنانے کا طریقہ",
+    "homework": "ٹوتھ پیسٹ میں بیکنگ سوڈا کا بطور اساس کردار تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-90",
+    "bookId": "grade8-science",
+    "lessonNumber": 90,
+    "chapterNumber": 11,
+    "chapterName": "روزمرہ زندگی میں ٹیکنالوجی (Technology in Everyday Life)",
+    "topic": "صابن سازی (Saponification) کا عمل اور صابن و ڈیٹرجنٹ بنانا",
+    "homework": "تیل اور کاسٹک سوڈا سے صابن بننے کا طریقہ کار لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-91",
+    "bookId": "grade8-science",
+    "lessonNumber": 91,
+    "chapterNumber": 11,
+    "chapterName": "روزمرہ زندگی میں ٹیکنالوجی (Technology in Everyday Life)",
+    "topic": "سولر ککر (Solar Cooker) کے ذریعے شمسی توانائی کو حرارت میں بدلنا",
+    "homework": "سولر ککر کا اصول اور اس میں شیشے کا کردار واضح کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-92",
+    "bookId": "grade8-science",
+    "lessonNumber": 92,
+    "chapterNumber": 11,
+    "chapterName": "روزمرہ زندگی میں ٹیکنالوجی (Technology in Everyday Life)",
+    "topic": "ونڈ ٹربائن (Wind Turbine) کا ماڈل بنانا اور ہوا سے بجلی پیدا کرنا",
+    "homework": "ہوا کی کائنیٹک انرجی کو برقی توانائی میں بدلنے کا خاکہ بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-93",
+    "bookId": "grade8-science",
+    "lessonNumber": 93,
+    "chapterNumber": 11,
+    "chapterName": "روزمرہ زندگی میں ٹیکنالوجی (Technology in Everyday Life)",
+    "topic": "یو پی ایس (UPS) اور انورٹر کے کام کرنے کا اصول اور استعمال",
+    "homework": "ڈی سی کو اے سی میں تبدیل کرنے کے اصول پر مختصر نوٹ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-94",
+    "bookId": "grade8-science",
+    "lessonNumber": 94,
+    "chapterNumber": 11,
+    "chapterName": "روزمرہ زندگی میں ٹیکنالوجی (Technology in Everyday Life)",
+    "topic": "برقی آلات کی مرمت اور دیکھ بھال کے بنیادی اصول",
+    "homework": "خراب پلگ اور تاروں کو بدلتے وقت بنیادی حفاظتی اصول لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-95",
+    "bookId": "grade8-science",
+    "lessonNumber": 95,
+    "chapterNumber": 11,
+    "chapterName": "روزمرہ زندگی میں ٹیکنالوجی (Technology in Everyday Life)",
+    "topic": "روزمرہ زندگی میں جدید آلات کی توانائی کی بچت (Energy Efficiency)",
+    "homework": "انورٹر ٹیکنالوجی اور عام موٹروں میں توانائی کے فرق پر نوٹ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-96",
+    "bookId": "grade8-science",
+    "lessonNumber": 96,
+    "chapterNumber": 11,
+    "chapterName": "روزمرہ زندگی میں ٹیکنالوجی (Technology in Everyday Life)",
+    "topic": "ماحول دوست ٹیکنالوجیز (Green Technologies) کا جائزہ",
+    "homework": "گرین انرجی سورسز کی تین بڑی مثالیں اور فوائد تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-97",
+    "bookId": "grade8-science",
+    "lessonNumber": 97,
+    "chapterNumber": 12,
+    "chapterName": "ہماری کائنات (Our Universe)",
+    "topic": "کائنات، ستاروں اور گلیکسیز کا بنیادی تعارف",
+    "homework": "ملکی وے گلیکسی اور کائنات کے پھیلاؤ پر مختصر نوٹ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-98",
+    "bookId": "grade8-science",
+    "lessonNumber": 98,
+    "chapterNumber": 12,
+    "chapterName": "ہماری کائنات (Our Universe)",
+    "topic": "گلیکسیز کی مختلف اقسام (اسپائرل، بیضوی، جیلی فش، بے قاعدہ) کا موازنہ",
+    "homework": "گلیکسیز کی مختلف اقسام کی اشکال اور خصوصیات کا چارٹ بنائیں"
+  },
+  {
+    "id": "grade8-sci-lesson-99",
+    "bookId": "grade8-science",
+    "lessonNumber": 99,
+    "chapterNumber": 12,
+    "chapterName": "ہماری کائنات (Our Universe)",
+    "topic": "ستارے کی زندگی کے مراحل (پروٹوسٹار، چمکتا ستارہ، سرخ دیو، سفید بونا)",
+    "homework": "ستارے کے ارتقائی مراحل کا ایک فلو چارٹ تیار کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-100",
+    "bookId": "grade8-science",
+    "lessonNumber": 100,
+    "chapterNumber": 12,
+    "chapterName": "ہماری کائنات (Our Universe)",
+    "topic": "نیوٹرون ستارہ، پلسر اور بلیک ہول (Black Hole) میں تبدیلی کے مراحل",
+    "homework": "بلیک ہول کی کشش ثقل اور خصوصیات پر تین جملے لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-101",
+    "bookId": "grade8-science",
+    "lessonNumber": 101,
+    "chapterNumber": 12,
+    "chapterName": "ہماری کائنات (Our Universe)",
+    "topic": "ہمارے سورج کی پیدائش، ساخت، عمر اور انجام کا مطالعہ",
+    "homework": "سورج کے مستقبل اور اس کے متوقع انجام پر نوٹ تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-102",
+    "bookId": "grade8-science",
+    "lessonNumber": 102,
+    "chapterNumber": 12,
+    "chapterName": "ہماری کائنات (Our Universe)",
+    "topic": "خلائی دوربینوں (ہبل، جیمز ویب) کی ساخت اور اہمیت",
+    "homework": "جیمز ویب اسپیس ٹیلی اسکوپ کی خلائی دریافتوں پر مختصر نوٹ لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-103",
+    "bookId": "grade8-science",
+    "lessonNumber": 103,
+    "chapterNumber": 12,
+    "chapterName": "ہماری کائنات (Our Universe)",
+    "topic": "اسپیس پروبز (Space Probes) اور نظام شمسی کی تحقیق",
+    "homework": "وائجر (Voyager) اسپیس پروب کا مشن اور مقصد تحریر کریں"
+  },
+  {
+    "id": "grade8-sci-lesson-104",
+    "bookId": "grade8-science",
+    "lessonNumber": 104,
+    "chapterNumber": 12,
+    "chapterName": "ہماری کائنات (Our Universe)",
+    "topic": "خلائی تحقیق کے فوائد (جی پی ایس، مواصلات، موسم اور طبی آلات)",
+    "homework": "جی پی ایس اور مواصلاتی سیٹلائٹ کے روزمرہ فوائد لکھیں"
+  },
+  {
+    "id": "grade8-sci-lesson-105",
+    "bookId": "grade8-science",
+    "lessonNumber": 105,
+    "chapterNumber": 12,
+    "chapterName": "ہماری کائنات (Our Universe)",
+    "topic": "خلائی سفر کے چیلنجز اور خلا بازوں کی زندگی",
+    "homework": "خلا میں کشش ثقل کی عدم موجودگی کے انسانی جسم پر اثرات لکھیں"
+  }
+]

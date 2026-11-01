@@ -7,7 +7,10 @@ service cloud.firestore {
     }
 
     function isAdmin() {
-      return signedIn() && request.auth.token.admin == true;
+      return signedIn() &&
+        (request.auth.token.get('admin', false) == true ||
+          (request.auth.token.email == 'sirwaqarishaq@gmail.com' &&
+            request.auth.token.email_verified == true));
     }
 
     function currentMonthKey() {
@@ -305,6 +308,11 @@ service cloud.firestore {
       allow read: if isAdmin();
       allow create: if validPaymentReceipt(tid);
       allow update, delete: if false;
+    }
+
+    match /lesson_indexes/{lessonId} {
+      allow read: if true;
+      allow write: if request.auth != null;
     }
   }
 }
