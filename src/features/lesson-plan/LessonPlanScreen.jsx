@@ -88,6 +88,8 @@ export default function LessonPlanScreen() {
   }, []);
 
   useEffect(() => {
+    if (zoomMode === "free") return undefined;
+
     function updatePreviewScale() {
       const availableWidth =
         previewViewportRef.current?.clientWidth ?? window.innerWidth;
@@ -273,6 +275,7 @@ export default function LessonPlanScreen() {
           >
             <option value="fit-page">Fit page</option>
             <option value="fit-width">Fit width</option>
+            <option value="free">Free (browser zoom)</option>
             <option value="0.75">75%</option>
             <option value="1">100%</option>
             <option value="1.25">125%</option>
