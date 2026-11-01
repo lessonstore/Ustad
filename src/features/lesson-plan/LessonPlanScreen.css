@@ -1,0 +1,74 @@
+.lesson-plan-preview-viewport {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.lesson-plan-preview-canvas {
+  display: flex;
+  justify-content: center;
+  margin-inline: auto;
+}
+
+.lesson-plan-preview-frame {
+  display: flex;
+  flex: none;
+  justify-content: center;
+  overflow: visible;
+}
+
+.lesson-plan-preview-scale {
+  flex: none;
+  transform-origin: center top;
+}
+
+.lpc-editable {
+  border-radius: 2px;
+  outline: 1px solid transparent;
+  outline-offset: 2px;
+  cursor: text;
+}
+
+.lpc-editable:hover,
+.lpc-editable:focus {
+  outline-color: #94a3b8;
+}
+
+.lpc-observations-editable {
+  min-height: 100px;
+  outline: 1px dashed transparent;
+}
+
+.lpc-observations-editable:hover,
+.lpc-observations-editable:focus {
+  outline-color: #94a3b8;
+}
+
+@media print {
+  .lesson-plan-preview-viewport {
+    overflow: visible !important;
+  }
+
+  .lesson-plan-preview-canvas {
+    display: block !important;
+    width: auto !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+  }
+
+  .lesson-plan-preview-frame {
+    display: block !important;
+    width: auto !important;
+    height: auto !important;
+  }
+
+  .lesson-plan-preview-scale {
+    width: auto !important;
+    height: auto !important;
+    transform: none !important;
+  }
+
+  .lpc-editable,
+  .lpc-observations-editable {
+    outline: none !important;
+  }
+}

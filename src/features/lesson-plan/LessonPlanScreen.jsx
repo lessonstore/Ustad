@@ -1,8 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { LessonPlanC } from "./index.js";
 import { lessonEn, lessonUr } from "./sampleLessons.js";
 import InstallPrompt from "../../components/InstallPrompt.jsx";
 import { curriculumData } from "../../data/curriculumData.js";
+import "./LessonPlanScreen.css";
 
 const storageKeys = {
   schoolName: "ustad-lesson-plan-school-name",
@@ -16,6 +17,8 @@ const urduGradeLabels = {
   "Grade 7": "جماعت ہفتم",
   "Grade 8": "جماعت ہشتم",
 };
+const pageWidthPx = (210 / 25.4) * 96;
+const pageHeightPx = (297 / 25.4) * 96;
 
 function readStoredValue(key) {
   try {
@@ -49,6 +52,54 @@ export default function LessonPlanScreen() {
   );
   const [extraMargin, setExtraMargin] = useState("none");
   const [schoolLogoUrl, setSchoolLogoUrl] = useState("");
+  const [zoomMode, setZoomMode] = useState("fit-width");
+  const [previewScale, setPreviewScale] = useState(1);
+  const previewViewportRef = useRef(null);
+
+  useEffect(() => {
+    function updatePreviewScale() {
+      const availableWidth =
+        previewViewportRef.current?.clientWidth ?? window.innerWidth;
+      const fitWidthScale = Math.max(
+        0.25,
+        Math.min(availableWidth / pageWidthPx, 1.5),
+      );
+
+      if (zoomMode === "fit-page") {
+        const previewTop =
+          previewViewportRef.current?.getBoundingClientRect().top ?? 0;
+        const availableHeight = Math.max(
+          200,
+          window.innerHeight - Math.max(0, previewTop) - 24,
+        );
+        setPreviewScale(
+          Math.max(
+            0.25,
+            Math.min(fitWidthScale, availableHeight / pageHeightPx),
+          ),
+        );
+      } else if (zoomMode === "fit-width") {
+        setPreviewScale(fitWidthScale);
+      } else {
+        setPreviewScale(Number(zoomMode));
+      }
+    }
+
+    updatePreviewScale();
+    window.addEventListener("resize", updatePreviewScale);
+    const observer =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(updatePreviewScale);
+    if (previewViewportRef.current) {
+      observer?.observe(previewViewportRef.current);
+    }
+
+    return () => {
+      window.removeEventListener("resize", updatePreviewScale);
+      observer?.disconnect();
+    };
+  }, [zoomMode]);
 
   useEffect(() => {
     try {
@@ -181,21 +232,66 @@ export default function LessonPlanScreen() {
         </details>
       </section>
 
-      <div className="overflow-x-auto print:overflow-visible">
-        <LessonPlanC
-          lang={lang}
-          lesson={{
-            ...(lang === "ur" ? lessonUr : lessonEn),
-            lessonNo: lessonNumber,
-            ...(selectedBook && {
-              classLabel:
-                lang === "ur"
-                  ? urduGradeLabels[selectedBook.grade]
-                  : selectedBook.grade,
-            }),
+      <div className="mx-auto mb-3 flex max-w-5xl justify-end print:hidden">
+        <label className="flex items-center gap-2 text-sm font-medium text-slate-700">
+          Preview zoom
+          <select
+            className="min-h-11 rounded-xl border border-slate-300 bg-white px-3 text-sm outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+            onChange={(event) => setZoomMode(event.target.value)}
+            value={zoomMode}
+          >
+            <option value="fit-page">Fit page</option>
+            <option value="fit-width">Fit width</option>
+            <option value="0.75">75%</option>
+            <option value="1">100%</option>
+            <option value="1.25">125%</option>
+          </select>
+        </label>
+      </div>
+
+      <div
+        className="lesson-plan-preview-viewport"
+        ref={previewViewportRef}
+      >
+        <div
+          className="lesson-plan-preview-canvas"
+          style={{
+            width: `max(100%, ${pageWidthPx * previewScale}px)`,
+            minHeight: `${pageHeightPx * previewScale}px`,
           }}
-          branding={branding}
-        />
+        >
+          <div
+            className="lesson-plan-preview-frame"
+            style={{
+              width: `${pageWidthPx * previewScale}px`,
+              height: `${pageHeightPx * previewScale}px`,
+            }}
+          >
+            <div
+              className="lesson-plan-preview-scale"
+              style={{
+                transform: `scale(${previewScale})`,
+                width: `${pageWidthPx}px`,
+                height: `${pageHeightPx}px`,
+              }}
+            >
+              <LessonPlanC
+                lang={lang}
+                lesson={{
+                  ...(lang === "ur" ? lessonUr : lessonEn),
+                  lessonNo: lessonNumber,
+                  ...(selectedBook && {
+                    classLabel:
+                      lang === "ur"
+                        ? urduGradeLabels[selectedBook.grade]
+                        : selectedBook.grade,
+                  }),
+                }}
+                branding={branding}
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </main>
   );

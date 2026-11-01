@@ -16,6 +16,19 @@ const DEFAULT_BRANDING = {
 const Item = ({ i }) => (typeof i === 'string' ? i : <><b>{i.lead}</b> {i.text}</>);
 const longest = (arr) => arr.reduce((a, c) => (c.length > a.length ? c : a), '');
 
+function Editable({ children, className }) {
+  return (
+    <span
+      className={`lpc-editable${className ? ` ${className}` : ''}`}
+      contentEditable
+      suppressContentEditableWarning
+      spellCheck={false}
+    >
+      {children}
+    </span>
+  );
+}
+
 function Logo({ b, S, size }) {
   if (b.logo === 'none') return null;
   const box = { width: size, height: size };
@@ -125,24 +138,34 @@ export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, pag
         <div className="lpc-col lpc-left">
           <div className="lpc-box lpc-glance">
             <p className="lpc-k">{S.glance}</p>
-            <b>{S.time}</b> {S.periods(l.minutes, periods)}<br /><b>{S.date}</b> ____________
+            <b>{S.time}</b> <Editable>{S.periods(l.minutes, periods)}</Editable>
+            <br /><b>{S.date}</b> <Editable>____________</Editable>
             <p className="lpc-k lpc-gap">{S.studentsWill}</p>
-            {l.slos.map((s, k) => <div key={k}>{s}{ur ? '۔' : '.'}</div>)}
+            {l.slos.map((s, k) => <div key={k}><Editable>{s}{ur ? '۔' : '.'}</Editable></div>)}
             <p className="lpc-k lpc-gap">{S.bring}</p>
-            {l.materials}{ur ? '۔' : '.'}
+            <Editable>{l.materials}{ur ? '۔' : '.'}</Editable>
           </div>
           <div className="lpc-box">
             <p className="lpc-k">{S.teacherNotes}</p>
-            {l.teacherInfo.map((it, k) => <div key={k}><Item i={it} /></div>)}
+            {l.teacherInfo.map((it, k) => <div key={k}><Editable><Item i={it} /></Editable></div>)}
           </div>
-          <div className="lpc-box lpc-obs"><p className="lpc-k">{S.observations}</p></div>
+          <div className="lpc-box lpc-obs">
+            <p className="lpc-k">{S.observations}</p>
+            <div
+              aria-label={S.observations}
+              className="lpc-editable lpc-observations-editable"
+              contentEditable
+              suppressContentEditableWarning
+              spellCheck={false}
+            />
+          </div>
         </div>
 
         <div className="lpc-col lpc-right">
           {boxes.map(([title, items, timed], n) => (
             <div className="lpc-box" key={n}>
               <h3><span className="lpc-cap">{title}</span>{timed && <span className="lpc-pill">{mins[n]} {S.min}</span>}</h3>
-              {items.map((it, k) => <div className="lpc-check" key={k}><i /><span><Item i={it} /></span></div>)}
+              {items.map((it, k) => <div className="lpc-check" key={k}><i /><span><Editable><Item i={it} /></Editable></span></div>)}
             </div>
           ))}
         </div>
