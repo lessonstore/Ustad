@@ -54,7 +54,27 @@ export default function LessonPlanScreen() {
   const [schoolLogoUrl, setSchoolLogoUrl] = useState("");
   const [zoomMode, setZoomMode] = useState("fit-width");
   const [previewScale, setPreviewScale] = useState(1);
+  const [previewContentHeight, setPreviewContentHeight] = useState(pageHeightPx);
   const previewViewportRef = useRef(null);
+  const previewScaleRef = useRef(null);
+
+  useEffect(() => {
+    const documentPreview =
+      previewScaleRef.current?.querySelector(".lpc-doc");
+    if (!documentPreview) return undefined;
+
+    function updateContentHeight() {
+      setPreviewContentHeight(documentPreview.scrollHeight);
+    }
+
+    updateContentHeight();
+    const observer =
+      typeof ResizeObserver === "undefined"
+        ? null
+        : new ResizeObserver(updateContentHeight);
+    observer?.observe(documentPreview);
+    return () => observer?.disconnect();
+  }, []);
 
   useEffect(() => {
     function updatePreviewScale() {
@@ -257,22 +277,23 @@ export default function LessonPlanScreen() {
           className="lesson-plan-preview-canvas"
           style={{
             width: `max(100%, ${pageWidthPx * previewScale}px)`,
-            minHeight: `${pageHeightPx * previewScale}px`,
+            minHeight: `${previewContentHeight * previewScale}px`,
           }}
         >
           <div
             className="lesson-plan-preview-frame"
             style={{
               width: `${pageWidthPx * previewScale}px`,
-              height: `${pageHeightPx * previewScale}px`,
+              height: `${previewContentHeight * previewScale}px`,
             }}
           >
             <div
               className="lesson-plan-preview-scale"
+              ref={previewScaleRef}
               style={{
                 transform: `scale(${previewScale})`,
                 width: `${pageWidthPx}px`,
-                height: `${pageHeightPx}px`,
+                height: `${previewContentHeight}px`,
               }}
             >
               <LessonPlanC

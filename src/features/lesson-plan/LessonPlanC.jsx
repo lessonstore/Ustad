@@ -62,6 +62,49 @@ function useSeparateLines(deps) {
   return { boxRef, aRef, bRef, sep };
 }
 
+function Banner({ l, b, S, ur }) {
+  const { boxRef, aRef, bRef, sep } = useSeparateLines([
+    l.domain,
+    l.subDomain,
+    b.logo,
+    ur,
+  ]);
+  const badge = <div className="lpc-badge">{S.lesson} {l.lessonNo}</div>;
+
+  if (ur) {
+    return (
+      <div className="lpc-banner">
+        <div className="lpc-info">
+          <Logo b={b} S={S} size={64} />
+          <div className="lpc-info-text" ref={boxRef}>
+            <span className="lpc-probe" ref={aRef}>{l.domain}</span>
+            <span className="lpc-probe" ref={bRef}>{l.subDomain}</span>
+            <b>{l.classLabel} · {l.subject}</b>
+            {sep
+              ? <><span className="lpc-line">{l.domain}</span><span className="lpc-line">{l.subDomain}</span></>
+              : <span className="lpc-merged">{l.domain} · {l.subDomain}</span>}
+          </div>
+        </div>
+        <div className="lpc-title-wrap"><div className="lpc-title">{l.topic}</div></div>
+        {badge}
+      </div>
+    );
+  }
+
+  return (
+    <div className="lpc-banner">
+      <div className="lpc-banner-left">
+        <Logo b={b} S={S} size={64} />
+        <div>
+          <div className="lpc-meta"><b>{l.classLabel} · {l.subject}</b>{l.domain} · {l.subDomain}</div>
+          <div className="lpc-topic">{l.topic}</div>
+        </div>
+      </div>
+      {badge}
+    </div>
+  );
+}
+
 function Footer({ b, S, page, pages }) {
   return (
     <div className="lpc-footer">
@@ -79,13 +122,11 @@ function Footer({ b, S, page, pages }) {
  * Lesson plan, template C ("Planner Checklist"), English or Urdu, one A4 page.
  * <LessonPlanC lang="ur" lesson={lessonUr} branding={{ teacherName, schoolName }} />
  */
-export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, page = 1, pages = 1, capsules = true }) {
+export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, capsules = true }) {
   const S = STRINGS[lang] ?? STRINGS.en;
   const ur = lang === 'ur';
   const b = { ...DEFAULT_BRANDING, ...branding };
   const mins = phaseMinutes(l);
-  const periods = l.minutes > 60 ? 2 : 1;
-  const { boxRef, aRef, bRef, sep } = useSeparateLines([l.domain, l.subDomain, lang, b.logo]);
 
   const boxes = [
     [S.introduction, l.introduction, true],
@@ -103,75 +144,156 @@ export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, pag
     '--lpc-ref-side': JSON.stringify(longest([S.glance, S.teacherNotes, S.observations])),
   };
 
+  const cls = `lpc${ur ? ' lpc--ur' : ''}${capsules ? '' : ' lpc--plain'}`;
+  const renderBox = ([title, items, timed], n) => (
+    <div className="lpc-box" key={n}>
+      <h3><span className="lpc-cap">{title}</span>{timed && <span className="lpc-pill">{mins[n]} {S.min}</span>}</h3>
+      {items.map((it, k) => <div className="lpc-check" key={k}><i /><span><Editable><Item i={it} /></Editable></span></div>)}
+    </div>
+  );
+
+  const [pages, setPages] = useState(() => [boxes.map((_, index) => index)]);
+  const measureRootRef = useRef(null);
+  const measureBannerRef = useRef(null);
+  const measureGridRef = useRef(null);
+  const measureRightRef = useRef(null);
+  const measureFooterRef = useRef(null);
+
+  useLayoutEffect(() => {
+    let cancelled = false;
+
+    function paginate() {
+      const root = measureRootRef.current;
+      const banner = measureBannerRef.current;
+      const grid = measureGridRef.current;
+      const right = measureRightRef.current;
+      const footer = measureFooterRef.current;
+      if (!root || !banner || !grid || !right || !footer) return;
+
+      const rootStyle = getComputedStyle(root);
+      const gridStyle = getComputedStyle(grid);
+      const availableHeight =
+        root.clientHeight -
+        parseFloat(rootStyle.paddingTop) -
+        parseFloat(rootStyle.paddingBottom) -
+        banner.offsetHeight -
+        footer.offsetHeight -
+        parseFloat(gridStyle.paddingTop) -
+        parseFloat(gridStyle.paddingBottom) -
+        2;
+      const boxHeights = [...right.children].map(
+        (box) =>
+          box.offsetHeight +
+          parseFloat(getComputedStyle(box).marginBottom),
+      );
+      const nextPages = [[]];
+      let usedHeight = 0;
+
+      boxHeights.forEach((height, index) => {
+        const currentPage = nextPages[nextPages.length - 1];
+        if (currentPage.length && usedHeight + height > availableHeight) {
+          nextPages.push([]);
+          usedHeight = 0;
+        }
+        nextPages[nextPages.length - 1].push(index);
+        usedHeight += height;
+      });
+
+      if (!cancelled) {
+        setPages((currentPages) =>
+          JSON.stringify(currentPages) === JSON.stringify(nextPages)
+            ? currentPages
+            : nextPages,
+        );
+      }
+    }
+
+    paginate();
+    document.fonts?.ready.then(paginate);
+
+    return () => {
+      cancelled = true;
+    };
+  }, [
+    l,
+    lang,
+    capsules,
+    b.logo,
+    b.schoolLogoUrl,
+    b.schoolName,
+    b.teacherName,
+    b.appName,
+    b.extraMargin,
+  ]);
+
   return (
-    <div className={`lpc${ur ? ' lpc--ur' : ''}${capsules ? '' : ' lpc--plain'}`} dir={S.dir} lang={lang} style={style}>
-      {ur ? (
-        <div className="lpc-banner">
-          <div className="lpc-info">
-            <Logo b={b} S={S} size={64} />
-            <div className="lpc-info-text" ref={boxRef}>
-              <span className="lpc-probe" ref={aRef}>{l.domain}</span>
-              <span className="lpc-probe" ref={bRef}>{l.subDomain}</span>
-              <b>{l.classLabel} · {l.subject}</b>
-              {sep
-                ? <><span className="lpc-line">{l.domain}</span><span className="lpc-line">{l.subDomain}</span></>
-                : <span className="lpc-merged">{l.domain} · {l.subDomain}</span>}
+    <div className="lpc-doc">
+      <div className="lpc-measure" aria-hidden="true">
+        <div className={cls} dir={S.dir} lang={lang} style={style} ref={measureRootRef}>
+          <div ref={measureBannerRef}>
+            <Banner l={l} b={b} S={S} ur={ur} />
+          </div>
+          <div className="lpc-grid" ref={measureGridRef}>
+            <div className="lpc-col lpc-left" />
+            <div className="lpc-col lpc-right" ref={measureRightRef}>
+              {boxes.map(renderBox)}
             </div>
           </div>
-          <div className="lpc-title-wrap"><div className="lpc-title">{l.topic}</div></div>
-          <div className="lpc-badge">{S.lesson} {l.lessonNo}</div>
-        </div>
-      ) : (
-        <div className="lpc-banner">
-          <div className="lpc-banner-left">
-            <Logo b={b} S={S} size={64} />
-            <div>
-              <div className="lpc-meta"><b>{l.classLabel} · {l.subject}</b>{l.domain} · {l.subDomain}</div>
-              <div className="lpc-topic">{l.topic}</div>
-            </div>
+          <div ref={measureFooterRef}>
+            <Footer b={b} S={S} page={1} pages={1} />
           </div>
-          <div className="lpc-badge">{S.lesson} {l.lessonNo}</div>
-        </div>
-      )}
-
-      <div className="lpc-grid">
-        <div className="lpc-col lpc-left">
-          <div className="lpc-box lpc-glance">
-            <p className="lpc-k">{S.glance}</p>
-            <b>{S.time}</b> <Editable>{S.periods(l.minutes, periods)}</Editable>
-            <br /><b>{S.date}</b> <Editable>____________</Editable>
-            <p className="lpc-k lpc-gap">{S.studentsWill}</p>
-            {l.slos.map((s, k) => <div key={k}><Editable>{s}{ur ? '۔' : '.'}</Editable></div>)}
-            <p className="lpc-k lpc-gap">{S.bring}</p>
-            <Editable>{l.materials}{ur ? '۔' : '.'}</Editable>
-          </div>
-          <div className="lpc-box">
-            <p className="lpc-k">{S.teacherNotes}</p>
-            {l.teacherInfo.map((it, k) => <div key={k}><Editable><Item i={it} /></Editable></div>)}
-          </div>
-          <div className="lpc-box lpc-obs">
-            <p className="lpc-k">{S.observations}</p>
-            <div
-              aria-label={S.observations}
-              className="lpc-editable lpc-observations-editable"
-              contentEditable
-              suppressContentEditableWarning
-              spellCheck={false}
-            />
-          </div>
-        </div>
-
-        <div className="lpc-col lpc-right">
-          {boxes.map(([title, items, timed], n) => (
-            <div className="lpc-box" key={n}>
-              <h3><span className="lpc-cap">{title}</span>{timed && <span className="lpc-pill">{mins[n]} {S.min}</span>}</h3>
-              {items.map((it, k) => <div className="lpc-check" key={k}><i /><span><Editable><Item i={it} /></Editable></span></div>)}
-            </div>
-          ))}
         </div>
       </div>
 
-      <Footer b={b} S={S} page={page} pages={pages} />
+      {pages.map((pageIndexes, pageIndex) => (
+        <div className={cls} dir={S.dir} lang={lang} style={style} key={pageIndex}>
+          <Banner l={l} b={b} S={S} ur={ur} />
+          <div className="lpc-grid">
+            <div className="lpc-col lpc-left">
+              {pageIndex === 0 && (
+                <>
+                  <div className="lpc-box lpc-glance">
+                    <p className="lpc-k">{S.glance}</p>
+                    <b>{S.time}</b> <Editable>{S.periods(l.minutes, l.minutes > 60 ? 2 : 1)}</Editable>
+                    <br /><b>{S.date}</b> <Editable>____________</Editable>
+                    <p className="lpc-k lpc-gap">{S.studentsWill}</p>
+                    {l.slos.map((text, index) => (
+                      <div key={index}><Editable>{text}{ur ? '۔' : '.'}</Editable></div>
+                    ))}
+                    <p className="lpc-k lpc-gap">{S.bring}</p>
+                    <Editable>{l.materials}{ur ? '۔' : '.'}</Editable>
+                  </div>
+                  <div className="lpc-box">
+                    <p className="lpc-k">{S.teacherNotes}</p>
+                    {l.teacherInfo.map((item, index) => (
+                      <div key={index}><Editable><Item i={item} /></Editable></div>
+                    ))}
+                  </div>
+                </>
+              )}
+              <div className="lpc-box lpc-obs">
+                <p className="lpc-k">{S.observations}</p>
+                <div
+                  aria-label={S.observations}
+                  className="lpc-editable lpc-observations-editable"
+                  contentEditable
+                  suppressContentEditableWarning
+                  spellCheck={false}
+                />
+              </div>
+            </div>
+            <div className="lpc-col lpc-right">
+              {pageIndexes.map((index) => renderBox(boxes[index], index))}
+            </div>
+          </div>
+          <Footer
+            b={b}
+            S={S}
+            page={pageIndex + 1}
+            pages={pages.length}
+          />
+        </div>
+      ))}
     </div>
   );
 }
