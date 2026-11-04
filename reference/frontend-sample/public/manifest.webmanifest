@@ -1,0 +1,9 @@
+{
+  "name": "USTAD - Unique Smart Teacher Assistant Dashboard",
+  "short_name": "USTAD",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f7f4ea",
+  "theme_color": "#13342a",
+  "icons": [{ "src": "/favicon.ico", "sizes": "64x64", "type": "image/x-icon" }]
+}

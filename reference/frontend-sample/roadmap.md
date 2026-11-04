@@ -1,0 +1,4 @@
+- [x] Protect lesson content until confirmed 10-token purchase, including direct requests.
+- [x] Replace Unlock with Preview and gate all lesson actions.
+- [x] Scroll the complete header subtitle only when overflowing, slower than the subjects.
+- [x] Verify paid access rules and desktop/mobile behavior.

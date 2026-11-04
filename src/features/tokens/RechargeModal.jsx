@@ -8,23 +8,12 @@ import {
 import { useUser } from "../../context/UserContext.jsx";
 import {
   getCurrentMonthKey,
-  getPreviousMonthKey,
-  isMonthInActiveWindow,
 } from "../../utils/monthUtils.js";
+import { PLANS } from "./plans.js";
 
 const paymentNumber = "03469140009";
-const basePlans = [
-  { id: "basic", name: "Basic", price: 150, tokens: 50, isAddon: false },
-  { id: "standard", name: "Standard", price: 300, tokens: 110, isAddon: false },
-  { id: "pro", name: "Pro", price: 450, tokens: 170, isAddon: false },
-];
-const addonPlan = {
-  id: "addon",
-  name: "Add-on",
-  price: 50,
-  tokens: 15,
-  isAddon: true,
-};
+const basePlans = PLANS.filter((plan) => plan.id !== "addon").map((plan) => ({ ...plan, isAddon: false }));
+const addonPlan = { ...PLANS.find((plan) => plan.id === "addon"), isAddon: true };
 
 function monthLabel(monthKey) {
   return new Date(`${monthKey}-01T12:00:00`).toLocaleDateString(undefined, {
@@ -36,16 +25,12 @@ function monthLabel(monthKey) {
 export default function RechargeModal({
   isOpen,
   onClose,
-  initialTargetMonth,
+  initialPlanId = "basic",
   onSubmitted,
 }) {
   const { currentUser, hasBasePlan } = useUser();
-  const [selectedMonth, setSelectedMonth] = useState(
-    isMonthInActiveWindow(initialTargetMonth)
-      ? initialTargetMonth
-      : getCurrentMonthKey(),
-  );
-  const [selectedPlanId, setSelectedPlanId] = useState("basic");
+  const selectedMonth = getCurrentMonthKey();
+  const [selectedPlanId, setSelectedPlanId] = useState(initialPlanId);
   const [senderPhone, setSenderPhone] = useState("");
   const [tid, setTid] = useState("");
   const [error, setError] = useState("");
@@ -58,14 +43,9 @@ export default function RechargeModal({
 
   useEffect(() => {
     if (!isOpen) return;
-    setSelectedMonth(
-      isMonthInActiveWindow(initialTargetMonth)
-        ? initialTargetMonth
-        : getCurrentMonthKey(),
-    );
-    setSelectedPlanId("basic");
+    setSelectedPlanId(initialPlanId);
     setError("");
-  }, [initialTargetMonth, isOpen]);
+  }, [initialPlanId, isOpen]);
 
   useEffect(() => {
     if (!addonEligible && selectedPlanId === addonPlan.id) {
@@ -108,8 +88,8 @@ export default function RechargeModal({
       setError("Enter the 11-character Transaction ID from your SMS.");
       return;
     }
-    if (!isMonthInActiveWindow(selectedMonth)) {
-      setError("Choose the current month or previous month.");
+    if (selectedMonth !== getCurrentMonthKey()) {
+      setError("Choose the current monthly plan.");
       return;
     }
     if (selectedPlan.isAddon && !hasBasePlan(selectedMonth)) {
@@ -145,7 +125,7 @@ export default function RechargeModal({
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-end justify-center bg-slate-950/50 p-0 sm:items-center sm:p-4"
+      className="ustad-recharge-overlay fixed inset-0 z-50 flex items-end justify-center p-0 sm:items-center sm:p-4"
       onMouseDown={(event) => {
         if (event.target === event.currentTarget) onClose();
       }}
@@ -153,14 +133,14 @@ export default function RechargeModal({
       <section
         aria-labelledby="recharge-title"
         aria-modal="true"
-        className="max-h-[92dvh] w-full max-w-2xl overflow-y-auto rounded-t-3xl bg-white p-5 shadow-2xl sm:rounded-3xl sm:p-7"
+        className="ustad-recharge-panel max-h-[92dvh] w-full max-w-2xl overflow-y-auto rounded-t-3xl p-5 shadow-2xl sm:rounded-3xl sm:p-7"
         role="dialog"
       >
         <div className="mb-5 flex items-start justify-between gap-4">
           <div>
-            <p className="mb-1 text-sm font-medium text-indigo-600">Add tokens</p>
+            <p className="mb-1 text-sm font-medium">Add tokens</p>
             <h2
-              className="text-xl font-semibold tracking-tight text-slate-900 sm:text-2xl"
+              className="text-xl font-semibold tracking-tight sm:text-2xl"
               id="recharge-title"
             >
               Recharge your balance
@@ -168,7 +148,7 @@ export default function RechargeModal({
           </div>
           <button
             aria-label="Close recharge dialog"
-            className="grid min-h-11 min-w-11 place-items-center rounded-xl text-2xl leading-none text-slate-500 hover:bg-slate-100 hover:text-slate-800"
+            className="ustad-recharge-close grid min-h-11 min-w-11 place-items-center rounded-xl text-2xl leading-none"
             onClick={onClose}
             type="button"
           >
@@ -176,25 +156,25 @@ export default function RechargeModal({
           </button>
         </div>
 
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 p-4 sm:p-5">
-          <p className="text-sm font-medium text-emerald-800">Payment method</p>
-          <p className="mt-1 text-lg font-semibold text-emerald-950">EasyPaisa</p>
-          <p className="mt-2 text-sm text-emerald-800">
-            Account title: <strong className="text-emerald-950">Waqar Ishaq</strong>
+        <div className="ustad-recharge-info rounded-2xl p-4 sm:p-5">
+          <p className="text-sm font-medium">Payment method</p>
+          <p className="mt-1 text-lg font-semibold">EasyPaisa</p>
+          <p className="mt-2 text-sm">
+            Account title: <strong>Waqar Ishaq</strong>
           </p>
-          <p className="mt-1 text-sm text-emerald-800">
+          <p className="mt-1 text-sm">
             Account number:{" "}
-            <strong className="tracking-wide text-emerald-950">{paymentNumber}</strong>
+            <strong className="tracking-wide">{paymentNumber}</strong>
           </p>
           <button
-            className="mt-4 min-h-11 rounded-xl bg-emerald-700 px-4 py-2 text-sm font-semibold text-white hover:bg-emerald-800"
+            className="ustad-recharge-copy mt-4 min-h-11 rounded-xl px-4 py-2 text-sm font-semibold"
             onClick={copyPaymentNumber}
             type="button"
           >
             Copy Number
           </button>
           {copyMessage && (
-            <span aria-live="polite" className="ml-3 text-sm text-emerald-900">
+            <span aria-live="polite" className="ml-3 text-sm">
               {copyMessage}
             </span>
           )}
@@ -202,31 +182,7 @@ export default function RechargeModal({
 
         <form className="mt-5 space-y-5" onSubmit={submitPayment}>
           <fieldset>
-            <legend className="mb-3 text-sm font-semibold text-slate-800">
-              Choose a target month
-            </legend>
-            <div className="grid grid-cols-2 gap-3">
-              {[getCurrentMonthKey(), getPreviousMonthKey()].map((monthKey) => (
-                <button
-                  aria-pressed={selectedMonth === monthKey}
-                  className={`min-h-12 rounded-xl border px-3 py-2 text-sm font-medium ${
-                    selectedMonth === monthKey
-                      ? "border-indigo-500 bg-indigo-50 text-indigo-800"
-                      : "border-slate-200 bg-white text-slate-700"
-                  }`}
-                  key={monthKey}
-                  onClick={() => setSelectedMonth(monthKey)}
-                  type="button"
-                >
-                  {monthLabel(monthKey)}
-                  {monthKey === getCurrentMonthKey() ? " · Current" : " · Catch-up"}
-                </button>
-              ))}
-            </div>
-          </fieldset>
-
-          <fieldset>
-            <legend className="mb-3 text-sm font-semibold text-slate-800">
+            <legend className="mb-3 text-sm font-semibold">
               Choose a plan for {monthLabel(selectedMonth)}
             </legend>
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
@@ -235,10 +191,10 @@ export default function RechargeModal({
                 return (
                   <button
                     aria-pressed={isSelected}
-                    className={`min-h-20 rounded-2xl border p-4 text-left transition focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 ${
+                    className={`ustad-recharge-plan min-h-20 rounded-2xl border p-4 text-left transition focus:outline-none ${
                       isSelected
-                        ? "border-indigo-500 bg-indigo-50 ring-1 ring-indigo-500"
-                        : "border-slate-200 bg-white hover:border-indigo-300 hover:bg-slate-50"
+                        ? "is-selected"
+                        : ""
                     }`}
                     key={plan.id}
                     onClick={() => {
@@ -247,11 +203,11 @@ export default function RechargeModal({
                     }}
                     type="button"
                   >
-                    <span className="font-semibold text-slate-900">
+                    <span className="font-semibold">
                       {plan.isAddon ? "Add-on" : `${plan.name} Plan`}
                     </span>
-                    <span className="mt-1 block text-sm text-slate-600">
-                      Rs {plan.price} · {plan.tokens} Tokens
+                    <span className="mt-1 block text-sm">
+                      Rs {plan.price} · {plan.tokens.toLocaleString()} Tokens
                     </span>
                   </button>
                 );
@@ -260,11 +216,11 @@ export default function RechargeModal({
           </fieldset>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <label className="grid gap-2 text-sm font-medium text-slate-700">
+            <label className="ustad-recharge-label grid gap-2 text-sm font-medium">
               EasyPaisa Sender Number
               <input
                 autoComplete="tel"
-                className="min-h-12 rounded-xl border border-slate-300 px-3 text-base outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className="ustad-recharge-input min-h-12 rounded-xl border px-3 text-base outline-none"
                 inputMode="numeric"
                 maxLength={11}
                 onChange={(event) => setSenderPhone(event.target.value)}
@@ -274,10 +230,10 @@ export default function RechargeModal({
                 value={senderPhone}
               />
             </label>
-            <label className="grid gap-2 text-sm font-medium text-slate-700">
+            <label className="ustad-recharge-label grid gap-2 text-sm font-medium">
               Transaction ID / TID
               <input
-                className="min-h-12 rounded-xl border border-slate-300 px-3 text-base uppercase outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
+                className="ustad-recharge-input min-h-12 rounded-xl border px-3 text-base uppercase outline-none"
                 maxLength={11}
                 onChange={(event) => setTid(event.target.value)}
                 placeholder="12345678901"
@@ -293,7 +249,7 @@ export default function RechargeModal({
             </p>
           )}
           <button
-            className="min-h-12 w-full rounded-xl bg-indigo-600 px-5 py-3 text-sm font-semibold text-white hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-60"
+            className="ustad-button ustad-recharge-submit min-h-12 w-full rounded-xl px-5 py-3 text-sm font-semibold disabled:cursor-wait disabled:opacity-60"
             disabled={submitting || !selectedPlan}
             type="submit"
           >

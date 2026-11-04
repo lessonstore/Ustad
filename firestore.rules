@@ -39,20 +39,20 @@ service cloud.firestore {
 
     function validPaymentPlan(type, planId, tokenAmount) {
       return (type == 'base' &&
-          ((planId == 'basic' && tokenAmount == 50) ||
-            (planId == 'standard' && tokenAmount == 110) ||
-            (planId == 'pro' && tokenAmount == 170))) ||
-        (type == 'addon' && planId == 'addon' && tokenAmount == 15);
+          ((planId == 'basic' && tokenAmount == 500) ||
+            (planId == 'standard' && tokenAmount == 1100) ||
+            (planId == 'pro' && tokenAmount == 1700))) ||
+        (type == 'addon' && planId == 'addon' && tokenAmount == 150);
     }
 
     function validUserCreation(uid) {
       return request.resource.data.keys().hasOnly([
           'uid', 'email', 'displayName', 'tokens', 'subscriptions',
-          'unlockedLessons'
+          'unlockedLessons', 'tokenScaleVersion'
         ]) &&
         request.resource.data.keys().hasAll([
           'uid', 'email', 'displayName', 'tokens', 'subscriptions',
-          'unlockedLessons'
+          'unlockedLessons', 'tokenScaleVersion'
         ]) &&
         request.resource.data.uid == uid &&
         (request.resource.data.email == null ||
@@ -64,7 +64,8 @@ service cloud.firestore {
         request.resource.data.subscriptions is map &&
         request.resource.data.subscriptions.keys().size() == 0 &&
         request.resource.data.unlockedLessons is map &&
-        request.resource.data.unlockedLessons.keys().size() == 0;
+        request.resource.data.unlockedLessons.keys().size() == 0 &&
+        request.resource.data.tokenScaleVersion == 2;
     }
 
     function validUnlockForMonth(month) {
@@ -81,7 +82,7 @@ service cloud.firestore {
         lessonMonths.hasOnly([month]) &&
         lessonMonths.hasAny([month]) &&
         oldBalance is int && newBalance is int &&
-        oldBalance > 0 && newBalance == oldBalance - 1 &&
+        oldBalance >= 10 && newBalance == oldBalance - 10 &&
         oldLessons is list && newLessons is list &&
         newLessons.size() == oldLessons.size() + 1 &&
         newLessons.hasAll(oldLessons);
@@ -91,8 +92,29 @@ service cloud.firestore {
       return request.resource.data.diff(resource.data).affectedKeys()
           .hasOnly(['tokens', 'unlockedLessons']) &&
         request.resource.data.subscriptions == resource.data.subscriptions &&
-        (validUnlockForMonth(currentMonthKey()) ||
-          validUnlockForMonth(previousMonthKey()));
+        validUnlockForMonth(currentMonthKey());
+    }
+
+    function validTokenScaleMigration(uid) {
+      let changed = request.resource.data.diff(resource.data).affectedKeys();
+      let oldTokens = resource.data.get('tokens', {});
+      let current = currentMonthKey();
+      let previous = previousMonthKey();
+      let currentBalance = oldTokens.get(current, 0);
+      let previousBalance = oldTokens.get(previous, 0);
+      return request.auth.uid == uid &&
+        (resource.data.get('tokenScaleVersion', 1) == 1 ||
+          resource.data.get('tokenScaleVersion', 1) == null) &&
+        request.resource.data.tokenScaleVersion == 2 &&
+        changed.hasOnly(['tokens', 'tokenScaleVersion']) &&
+        changed.hasAll(['tokens', 'tokenScaleVersion']) &&
+        oldTokens is map &&
+        currentBalance is int && currentBalance >= 0 &&
+        previousBalance is int && previousBalance >= 0 &&
+        request.resource.data.tokens is map &&
+        request.resource.data.tokens.keys().hasOnly([current]) &&
+        request.resource.data.tokens.get(current, 0) ==
+          (currentBalance + previousBalance) * 10;
     }
 
     function removalOnly(oldMap, newMap) {
@@ -221,6 +243,7 @@ service cloud.firestore {
         data.type in ['base', 'addon'] &&
         data.planId is string &&
         data.tokenAmount is int &&
+        validPaymentPlan(data.type, data.planId, data.tokenAmount) &&
         activeMonth(data.targetMonth) &&
         data.senderPhone is string &&
         data.senderPhone.matches('^[0-9]{11}$') &&
@@ -288,7 +311,8 @@ service cloud.firestore {
         request.auth.uid == uid &&
         validUserCreation(uid);
       allow update: if signedIn() &&
-        ((request.auth.uid == uid &&
+        (validTokenScaleMigration(uid) ||
+          (request.auth.uid == uid &&
             (validUnlockUpdate() ||
               validPurgeUpdate() ||
               validProfileSync(uid))) ||

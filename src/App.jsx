@@ -3,13 +3,29 @@ import LessonPlanScreen from "./features/lesson-plan/LessonPlanScreen.jsx";
 import { UserProvider } from "./context/UserContext.jsx";
 import { useUser } from "./context/UserContext.jsx";
 import AdminPaymentQueue from "./features/tokens/AdminPaymentQueue.jsx";
+import SiteShell from "./components/SiteShell.jsx";
 
 function AppContent() {
   const { currentUser, loading, isAdmin, signIn } = useUser();
   const pathname = window.location.pathname.replace(/\/+$/, "") || "/";
 
   if (pathname === "/lesson-plan") {
-    return <LessonPlanScreen />;
+    return <SiteShell><LessonPlanScreen /></SiteShell>;
+  }
+
+  if (pathname === "/auth") {
+    return (
+      <SiteShell>
+        <main className="ustad-section">
+          <section className="ustad-profile-card ustad-auth-card">
+            <h1>{currentUser ? "You are signed in" : "Welcome to USTAD"}</h1>
+            <p>{currentUser ? currentUser.email : "Sign in with your Google account to purchase lesson previews and manage your plans."}</p>
+            {!currentUser && <button className="ustad-button" disabled={loading} onClick={() => void signIn().catch(() => {})} type="button">Sign in with Google</button>}
+            {currentUser && <a className="ustad-button" href="/profile">Go to my profile</a>}
+          </section>
+        </main>
+      </SiteShell>
+    );
   }
 
   if (pathname === "/admin" || pathname === "/admin/queue") {
@@ -40,7 +56,7 @@ function AppContent() {
       );
     }
 
-    return <AdminPaymentQueue />;
+    return <SiteShell><AdminPaymentQueue /></SiteShell>;
   }
 
   return <CatalogViewer />;

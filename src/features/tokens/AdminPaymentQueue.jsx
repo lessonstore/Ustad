@@ -16,10 +16,10 @@ import { useUser } from "../../context/UserContext.jsx";
 import { isMonthInActiveWindow } from "../../utils/monthUtils.js";
 
 const plans = {
-  basic: { type: "base", tokens: 50 },
-  standard: { type: "base", tokens: 110 },
-  pro: { type: "base", tokens: 170 },
-  addon: { type: "addon", tokens: 15 },
+  basic: { type: "base", tokens: 500 },
+  standard: { type: "base", tokens: 1100 },
+  pro: { type: "base", tokens: 1700 },
+  addon: { type: "addon", tokens: 150 },
 };
 
 export default function AdminPaymentQueue() {

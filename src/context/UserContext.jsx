@@ -31,11 +31,10 @@ import {
   getCurrentMonthKey,
   getPreviousMonthKey,
   isMonthInActiveWindow,
-  isValidMonthFormat,
 } from "../utils/monthUtils.js";
 
 const UserContext = createContext(null);
-const balanceMaps = ["tokens", "subscriptions", "unlockedLessons"];
+const balanceMaps = ["tokens", "subscriptions"];
 const adminEmail = "sirwaqarishaq@gmail.com";
 
 function makeDefaultProfile(user) {
@@ -46,6 +45,7 @@ function makeDefaultProfile(user) {
     tokens: {},
     subscriptions: {},
     unlockedLessons: {},
+    tokenScaleVersion: 2,
   };
 }
 
@@ -119,6 +119,23 @@ export function UserProvider({ children }) {
             await setDoc(userRef, profileUpdates, { merge: true });
             profile = { ...profile, ...profileUpdates };
           }
+        }
+
+        if (profile.tokenScaleVersion !== 2) {
+          if (profile.tokenScaleVersion != null && profile.tokenScaleVersion !== 1) {
+            throw new Error("Unsupported token balance version. Contact support before using tokens.");
+          }
+          const currentMonth = getCurrentMonthKey();
+          const previousMonth = getPreviousMonthKey();
+          const balances = profile.tokens ?? {};
+          const oldBalance = Number(balances[currentMonth] ?? 0) + Number(balances[previousMonth] ?? 0);
+          const migratedBalance = oldBalance * 10;
+          if (!Number.isSafeInteger(migratedBalance) || migratedBalance < 0) {
+            throw new Error("Could not safely convert the existing token balance.");
+          }
+          const tokens = { [currentMonth]: migratedBalance };
+          await updateDoc(userRef, { tokens, tokenScaleVersion: 2 });
+          profile = { ...profile, tokens, tokenScaleVersion: 2 };
         }
 
         const activeMonths = new Set([
@@ -237,7 +254,7 @@ export function UserProvider({ children }) {
       if (!currentUser) {
         return { success: false, reason: "authentication_required" };
       }
-      if (!lesson?.id || !isValidMonthFormat(lesson?.month)) {
+      if (!lesson?.id || !Number.isInteger(lesson?.lessonNumber) || lesson.lessonNumber < 1) {
         return { success: false, reason: "invalid_lesson" };
       }
       if (!userProfile) {
@@ -246,36 +263,33 @@ export function UserProvider({ children }) {
       if (lesson.lessonNumber === 1) {
         return { success: true, reason: "preview" };
       }
-      if (!isMonthInActiveWindow(lesson.month)) {
-        return { success: false, reason: "archived_window_closed" };
-      }
-
       const monthUnlocks =
-        userProfile?.unlockedLessons?.[lesson.month] ?? [];
-      if (monthUnlocks.includes(lesson.id)) {
+        Object.values(userProfile?.unlockedLessons ?? {});
+      if (monthUnlocks.some((lessons) => lessons.includes(lesson.id))) {
         return { success: true, reason: "already_unlocked" };
       }
 
-      const balance = Number(userProfile?.tokens?.[lesson.month] ?? 0);
-      if (balance <= 0) {
-        openRechargeModal(lesson.month);
+      const month = getCurrentMonthKey();
+      const balance = Number(userProfile?.tokens?.[month] ?? 0);
+      if (balance < 10) {
+        openRechargeModal(month);
         return { success: false, reason: "insufficient_tokens" };
       }
 
       const userRef = doc(db, "users", currentUser.uid);
       await updateDoc(userRef, {
-        [`tokens.${lesson.month}`]: increment(-1),
-        [`unlockedLessons.${lesson.month}`]: arrayUnion(lesson.id),
+        [`tokens.${month}`]: increment(-10),
+        [`unlockedLessons.${month}`]: arrayUnion(lesson.id),
       });
       setUserProfile((profile) => ({
         ...profile,
         tokens: {
           ...profile.tokens,
-          [lesson.month]: balance - 1,
+          [month]: balance - 10,
         },
         unlockedLessons: {
           ...profile.unlockedLessons,
-          [lesson.month]: [...monthUnlocks, lesson.id],
+          [month]: [...(profile.unlockedLessons?.[month] ?? []), lesson.id],
         },
       }));
       return { success: true, reason: "unlocked" };

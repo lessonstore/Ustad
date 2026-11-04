@@ -1,568 +1,276 @@
 import { useEffect, useMemo, useState } from "react";
-import {
-  collection,
-  db,
-  getDocs,
-  orderBy,
-  query,
-} from "../../services/firebase.js";
-import grade8ScienceIndex from "../../data/grade8ScienceIndex.json";
-import { curriculumData, isLessonAvailable } from "../../data/curriculumData.js";
+import { collection, db, getDocs, query, where } from "../../services/firebase.js";
 import { useUser } from "../../context/UserContext.jsx";
-import {
-  getCurrentMonthKey,
-  getPreviousMonthKey,
-  isMonthInActiveWindow,
-} from "../../utils/monthUtils.js";
-import InstallPrompt from "../../components/InstallPrompt.jsx";
+import SiteShell from "../../components/SiteShell.jsx";
 import RechargeModal from "../tokens/RechargeModal.jsx";
+import { PLANS } from "../tokens/plans.js";
+import { curriculumData } from "../../data/curriculumData.js";
+import { getCurrentMonthKey } from "../../utils/monthUtils.js";
+import UiIcon from "../../components/UiIcon.jsx";
+import "./catalog-theme.css";
 
-const urduGradeNames = {
-  "Grade 4": "چہارم",
-  "Grade 5": "پنجم",
-  "Grade 6": "ششم",
-  "Grade 7": "ہفتم",
-  "Grade 8": "ہشتم",
-};
+const gradeNumber = (grade) => Number(grade.replace(/\D/g, ""));
+const roman = ["اول", "دوم", "سوم", "چہارم", "پنجم", "ششم", "ہفتم", "ہشتم", "نہم", "دہم"];
+const currentMonth = () => getCurrentMonthKey();
+const visibleGrades = Array.from({ length: 10 }, (_, index) => {
+  const number = index + 1;
+  const grade = curriculumData.find((item) => gradeNumber(item.grade) === number);
+  return { number, grade, name: `Class ${number}`, urdu: `جماعت ${roman[index]}` };
+});
 
-const urduSubjectNames = {
-  math: "ریاضی",
-  science: "جنرل سائنس",
-  english: "انگریزی",
-  urdu: "اردو",
-};
-const catalogReturnSelectionKey = "ustad-catalog-return-selection";
-
-function subjectKeyForBook(book) {
-  if (book.bookId === "grade8-science") return "science";
-  return Object.keys(urduSubjectNames).find((key) =>
-    book.bookId.includes(`-${key}-`),
-  );
+function cardLessonCount() {
+  return curriculumData.reduce((total, grade) => total + grade.books.reduce((sum, book) => sum + book.lessons.length, 0), 0);
 }
 
-function saveCatalogReturnSelection(grade, bookId, monthKey) {
-  try {
-    window.sessionStorage.setItem(
-      catalogReturnSelectionKey,
-      JSON.stringify({ grade, bookId, monthKey }),
-    );
-  } catch (error) {
-    console.error("Could not save catalog selection for return navigation:", error);
-  }
+function monthForLesson(book, lessonNumber) {
+  const month = Object.entries(book.academicSchedule).find(([, range]) => lessonNumber >= range.startLesson && lessonNumber <= range.endLesson)?.[0];
+  if (!month) return null;
+  const now = new Date();
+  const academicYear = now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1;
+  const monthIndex = new Date(`${month} 1, 2000`).getMonth();
+  const year = monthIndex >= 3 ? academicYear : academicYear + 1;
+  return `${year}-${String(monthIndex + 1).padStart(2, "0")}`;
 }
 
-function readCatalogReturnSelection() {
-  try {
-    const savedSelection = window.sessionStorage.getItem(
-      catalogReturnSelectionKey,
-    );
-    if (!savedSelection) return null;
-
-    const selection = JSON.parse(savedSelection);
-    const grade = curriculumData.find(
-      ({ grade: gradeName }) => gradeName === selection.grade,
-    );
-    const book = grade?.books.find(
-      ({ bookId }) => bookId === selection.bookId,
-    );
-    if (!grade || !book) return null;
-
-    return { grade: grade.grade, bookId: book.bookId, monthKey: selection.monthKey };
-  } catch (error) {
-    console.error("Could not restore catalog selection:", error);
-    return null;
-  }
+function findGrade(number) {
+  return curriculumData.find((item) => gradeNumber(item.grade) === Number(number));
 }
 
-function monthLabel(monthKey) {
-  return new Date(`${monthKey}-01T12:00:00`).toLocaleDateString(undefined, {
-    month: "long",
-    year: "numeric",
-  });
-}
-
-function balancePill(monthKey, tokens) {
-  const amount = Number(tokens?.[monthKey] ?? 0);
-  if (amount <= 0) return null;
+function HomePage() {
+  const classesHref = "/classes";
   return (
-    <span
-      className="min-h-11 content-center rounded-xl bg-white px-4 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200"
-      key={monthKey}
-    >
-      {monthLabel(monthKey).split(" ")[0]}: {amount}
-    </span>
+    <>
+      <section className="ustad-hero">
+        <div className="ustad-hero-inner">
+          <div>
+            <span className="ustad-eyebrow"><UiIcon name="graduation" size={14} /> For Government Teachers · SED Punjab</span>
+            <h1>Plan less.<br /><em>Teach more.</em></h1>
+            <p>Find lesson plans for your class and subject. Preview, prepare, and print your plan for the classroom.</p>
+            <a className="ustad-primary-link ustad-hero-action" href={classesHref}>Browse classes <UiIcon name="arrow-right" size={17} /></a>
+            <div className="ustad-stats">
+              <div className="ustad-stat"><strong>{curriculumData.length}</strong><span>Grade levels available</span></div>
+              <div className="ustad-stat"><strong>{curriculumData.reduce((sum, item) => sum + item.books.length, 0)}</strong><span>Subject books</span></div>
+              <div className="ustad-stat"><strong>{cardLessonCount().toLocaleString()}+</strong><span>Lesson listings</span></div>
+            </div>
+          </div>
+          <div className="ustad-hero-cards" aria-hidden="true">
+            {["Mathematics · Lesson plan", "English · Lesson plan", "Science · Lesson plan"].map((title, index) => (
+              <div className="ustad-float-card" key={title}>
+                <div className="ustad-float-meta"><span>Class {index + 4}</span><b>LESSON PLAN</b></div>
+                <h3>{title}</h3>
+                <span className="ustad-float-meta"><span>Ready to preview</span><UiIcon name="book" size={15} /></span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+      <section className="ustad-section">
+        <div className="ustad-section-heading">
+          <p>Choose your class</p>
+          <h2>Start with a class</h2>
+        </div>
+        <div className="ustad-class-grid">
+          {visibleGrades.map(({ number, grade, name, urdu }) => grade ? (
+            <a className="ustad-class-card" href={`/classes/${number}`} key={number}>
+              <span className="ustad-class-number">{number}</span>
+              <small>{number <= 5 ? "Primary" : number <= 8 ? "Elementary" : "Secondary"}</small>
+              <h3>{name}</h3><p dir="rtl">{urdu}</p>
+            </a>
+          ) : (
+            <div aria-disabled="true" className="ustad-class-card" key={number}>
+              <span className="ustad-class-number">{number}</span>
+              <small>{number <= 5 ? "Primary" : "Secondary"}</small>
+              <h3>{name}</h3><p dir="rtl">{urdu}</p><span className="ustad-coming">Coming soon</span>
+            </div>
+          ))}
+        </div>
+      </section>
+    </>
   );
+}
+
+function ClassesPage() {
+  const stages = [
+    { name: "Primary", numbers: [1, 2, 3, 4, 5] },
+    { name: "Elementary", numbers: [6, 7, 8] },
+    { name: "Secondary", numbers: [9, 10] },
+  ];
+  return (
+    <section className="ustad-section">
+      <div className="ustad-section-heading"><p>Browse the catalog</p><h1>All classes</h1><span>Choose a class, then a subject, to see available lesson plans.</span></div>
+      {stages.map((stage) => (
+        <div className="ustad-group" key={stage.name}>
+          <h2>{stage.name}</h2>
+          <div className="ustad-class-grid">
+            {stage.numbers.map((number) => {
+              const found = visibleGrades[number - 1];
+              return found.grade ? (
+                <a className="ustad-class-card" href={`/classes/${number}`} key={number}>
+                  <span className="ustad-class-number">{number}</span><small>{stage.name}</small>
+                  <h3>{found.name}</h3><p dir="rtl">{found.urdu}</p>
+                </a>
+              ) : (
+                <div aria-disabled="true" className="ustad-class-card" key={number}>
+                  <span className="ustad-class-number">{number}</span><small>{stage.name}</small>
+                  <h3>{found.name}</h3><p dir="rtl">{found.urdu}</p><span className="ustad-coming">Coming soon</span>
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      ))}
+    </section>
+  );
+}
+
+function SubjectsPage({ number }) {
+  const grade = findGrade(number);
+  if (!grade) return <NotAvailable />;
+  const uniqueSubjects = grade.books.reduce((subjects, book) => {
+    const key = `${book.subjectName}-${book.medium}`;
+    if (!subjects.some((item) => item.key === key)) subjects.push({ key, book, label: book.subject });
+    return subjects;
+  }, []);
+  return (
+    <section className="ustad-section">
+      <a className="ustad-back-link" href="/classes"><UiIcon name="arrow-left" size={15} /> All classes</a>
+      <div className="ustad-section-heading"><p>{grade.grade}</p><h1>Choose a subject</h1><span>Select the subject and language medium.</span></div>
+      <div className="ustad-subject-grid">
+        {uniqueSubjects.map(({ key, book, label }) => (
+          <a className="ustad-subject-card" href={`/classes/${number}/${book.bookId}`} key={key}>
+            <small>{book.medium}</small><h3>{label}</h3>
+            <p>{book.lessons.length} lesson listings <UiIcon name="arrow-right" size={14} /></p>
+          </a>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function LessonsPage({ number, bookId }) {
+  const grade = findGrade(number);
+  const book = grade?.books.find((item) => item.bookId === bookId);
+  const [search, setSearch] = useState("");
+  const lessons = useMemo(() => (book?.lessons ?? []).filter((lesson) => {
+    const title = lesson.topic ?? lesson.title ?? `Lesson ${lesson.lessonNumber}`;
+    return `${title} ${lesson.chapterName ?? ""}`.toLowerCase().includes(search.toLowerCase());
+  }), [book, search]);
+  if (!book || !grade) return <NotAvailable />;
+  return (
+    <section className="ustad-section">
+      <a className="ustad-back-link" href={`/classes/${number}`}><UiIcon name="arrow-left" size={15} /> {grade.grade}</a>
+      <div className="ustad-section-heading"><p>{grade.grade}</p><h1>{book.subject}</h1><span>{book.medium} · {book.lessons.length} lessons</span></div>
+      <label className="ustad-search"><UiIcon name="search" size={17} /><input value={search} onChange={(event) => setSearch(event.target.value)} placeholder="Search lessons…" /></label>
+      <div className="ustad-lesson-list">
+        {lessons.map((lesson) => {
+          const title = lesson.topic ?? lesson.title ?? `Lesson ${lesson.lessonNumber}`;
+          const month = monthForLesson(book, lesson.lessonNumber);
+          const monthName = Object.entries(book.academicSchedule).find(([, range]) => lesson.lessonNumber >= range.startLesson && lesson.lessonNumber <= range.endLesson)?.[0];
+          const params = new URLSearchParams({ bookId: book.bookId, lessonNumber: String(lesson.lessonNumber), ...(month ? { month } : {}) });
+          return (
+            <article className="ustad-lesson-card" key={lesson.id}>
+              <span className="ustad-week"><small>Lesson</small><b>{lesson.lessonNumber}</b></span>
+              <span className="ustad-lesson-info"><b>{title}</b><small>{lesson.chapterName}{monthName ? ` · ${monthName}` : ""}</small></span>
+              <a className="ustad-preview-link" href={`/lesson-plan?${params}`}>Preview</a>
+            </article>
+          );
+        })}
+        {!lessons.length && <p className="ustad-empty">No lessons match your search.</p>}
+      </div>
+    </section>
+  );
+}
+
+function PlansPage() {
+  const { currentUser, hasBasePlan, signIn } = useUser();
+  const [showRecharge, setShowRecharge] = useState(false);
+  const [selectedPlanId, setSelectedPlanId] = useState("basic");
+  const [paymentSubmitted, setPaymentSubmitted] = useState(false);
+  const activePlan = hasBasePlan(currentMonth());
+  return (
+    <>
+      <section className="ustad-page-hero"><div className="ustad-page-hero-inner"><p className="ustad-eyebrow">Token plans</p><h1>Choose your monthly plan</h1><p>Lesson previews cost 10 tokens. Monthly tokens reset on the first day of each month.</p><span className="ustad-sale-note">Introductory sale · 50% off displayed plan prices</span></div></section>
+      <section className="ustad-section">
+        {paymentSubmitted && <p className="ustad-success-alert" role="status">Payment request submitted. Tokens will be added after your payment is verified.</p>}
+        <div className="ustad-plans-grid">
+          {PLANS.map((plan) => {
+            const locked = plan.id === "addon" && !activePlan;
+            return (
+              <article className={`ustad-plan-card${plan.popular ? " is-popular" : ""}`} key={plan.id}>
+                {plan.popular && <span className="ustad-plan-popular">Most popular</span>}
+                <h2>{plan.name}</h2>
+                <div className="ustad-plan-sale"><del>Rs {(plan.price * 2).toLocaleString()}</del><b>50% OFF</b></div>
+                <div className="ustad-plan-price">Rs {plan.price.toLocaleString()}</div>
+                <div className="ustad-plan-tokens"><UiIcon name="coins" size={15} /> {plan.tokens.toLocaleString()} tokens</div>
+                <p>{plan.tagline}</p>
+                <button className="ustad-button" disabled={locked} onClick={() => {
+                  if (!currentUser) { void signIn().catch(() => {}); return; }
+                  setSelectedPlanId(plan.id);
+                  setShowRecharge(true);
+                }} type="button">{locked ? "Needs an active plan" : currentUser ? "Buy with EasyPaisa" : "Sign in to buy"}</button>
+              </article>
+            );
+          })}
+        </div>
+      </section>
+      <RechargeModal isOpen={showRecharge} initialPlanId={selectedPlanId} onClose={() => setShowRecharge(false)} onSubmitted={() => setPaymentSubmitted(true)} />
+    </>
+  );
+}
+
+function ProfilePage() {
+  const { currentUser, userProfile, signOut, hasBasePlan, isAdmin } = useUser();
+  const [payments, setPayments] = useState([]);
+  const [loadingPayments, setLoadingPayments] = useState(true);
+  const [paymentError, setPaymentError] = useState("");
+  const month = currentMonth();
+  useEffect(() => {
+    if (!currentUser) { setLoadingPayments(false); return; }
+    let active = true;
+    setLoadingPayments(true);
+    void getDocs(query(collection(db, "payment_requests"), where("userId", "==", currentUser.uid)))
+      .then((snapshot) => {
+        if (active) setPayments(snapshot.docs
+          .map((item) => ({ id: item.id, ...item.data() }))
+          .sort((first, second) => (second.createdAt?.toMillis?.() ?? 0) - (first.createdAt?.toMillis?.() ?? 0)));
+      })
+      .catch((error) => {
+        console.error("Could not load payment history:", error);
+        if (active) setPaymentError("Payment history could not be loaded. Please try again later.");
+      })
+      .finally(() => { if (active) setLoadingPayments(false); });
+    return () => { active = false; };
+  }, [currentUser]);
+  if (!currentUser) return <section className="ustad-section"><h1>Sign in to view your account</h1><p>Your plan and payment history will appear here.</p></section>;
+  return (
+    <section className="ustad-section">
+      <div className="ustad-profile-heading"><h1>Assalam-o-Alaikum{currentUser.displayName ? `, ${currentUser.displayName.split(" ")[0]}` : ""}</h1><div className="ustad-profile-actions">{isAdmin && <a className="ustad-outline-button" href="/admin">Admin</a>}<button className="ustad-outline-button" onClick={() => void signOut().catch(() => {})} type="button">Sign out</button></div></div>
+      <div className="ustad-profile-grid">
+        <article className="ustad-profile-card ustad-profile-wallet"><p>{new Date().toLocaleString("en", { month: "long", year: "numeric" })}</p><div className="ustad-profile-balance">{Number(userProfile?.tokens?.[month] ?? 0).toLocaleString()}</div><p>tokens · {hasBasePlan(month) ? "Active plan" : "No active plan"}</p><a className="ustad-button" href="/pricing">Buy a plan</a></article>
+        <article className="ustad-profile-card"><h2>Teacher account</h2><p>{currentUser.displayName || "Teacher"}</p><p>{currentUser.email}</p><p>Sign-in and saved account data are managed securely with Firebase.</p></article>
+      </div>
+      <h2 className="ustad-history-title">Payment history</h2>
+      {paymentError ? <p className="ustad-purchase-error" role="alert">{paymentError}</p> : loadingPayments ? <p>Loading payment history…</p> : payments.length ? <div className="ustad-payment-list">{payments.map((payment) => (
+        <article className="ustad-payment-row" key={payment.id}><div><b>{PLANS.find((plan) => plan.id === payment.planId)?.name ?? payment.planId}</b> · Rs {PLANS.find((plan) => plan.id === payment.planId)?.price ?? "—"} · {payment.tokenAmount} tokens<small>Transaction {payment.tid} · {payment.createdAt?.toDate?.().toLocaleString() ?? "Pending date"}</small></div><span className={`ustad-status ustad-status-${payment.status}`}>{payment.status}</span></article>
+      ))}</div> : <p className="ustad-empty">No payments yet.</p>}
+    </section>
+  );
+}
+
+function NotAvailable() {
+  return <section className="ustad-section"><a className="ustad-back-link" href="/classes"><UiIcon name="arrow-left" size={15} /> All classes</a><h1>Content coming soon</h1><p>This class or subject is not available in the current lesson catalog yet.</p></section>;
 }
 
 export default function CatalogViewer() {
-  const {
-    currentUser,
-    userProfile,
-    loading,
-    profileError,
-    authError,
-    isAdmin,
-    signIn,
-    signOut,
-    unlockLesson,
-    openRechargeModal,
-    rechargeTargetMonth,
-    closeRechargeModal,
-  } = useUser();
-    const [returnSelection] = useState(readCatalogReturnSelection);
-    const [selectedGradeName, setSelectedGradeName] = useState(
-      returnSelection?.grade ?? "Grade 6",
-    );
-    const [selectedBookId, setSelectedBookId] = useState(
-      returnSelection?.bookId ?? "grade6-math-english-medium",
-    );
-    const [selectedMonthKey, setSelectedMonthKey] = useState(
-      returnSelection?.monthKey ?? getCurrentMonthKey(),
-    );
-  const [unlockError, setUnlockError] = useState("");
-  const [busyLessonId, setBusyLessonId] = useState("");
-  const [paymentMessage, setPaymentMessage] = useState("");
-  const [scienceLessons, setScienceLessons] = useState(grade8ScienceIndex);
-
-  useEffect(() => {
-    if (!returnSelection) return;
-
-    try {
-      window.sessionStorage.removeItem(catalogReturnSelectionKey);
-    } catch (error) {
-      console.error("Could not clear restored catalog selection:", error);
-    }
-  }, [returnSelection]);
-
-  useEffect(() => {
-    let active = true;
-
-    async function loadScienceIndex() {
-      if (!navigator.onLine) {
-        setScienceLessons(grade8ScienceIndex);
-        return;
-      }
-
-      try {
-        const snapshot = await getDocs(
-          query(collection(db, "lesson_indexes"), orderBy("lessonNumber", "asc")),
-        );
-        const outlines = snapshot.docs
-          .map((lessonDocument) => lessonDocument.data())
-          .filter((lesson) => lesson.bookId === "grade8-science")
-          .map((lesson) => ({
-            ...lesson,
-            title: lesson.topic,
-            isFreeSample: lesson.lessonNumber === 1,
-            tokenCost: lesson.lessonNumber === 1 ? 0 : 1,
-          }));
-        if (outlines.length !== grade8ScienceIndex.length) {
-          throw new Error(
-            `Expected ${grade8ScienceIndex.length} Grade 8 science lessons; found ${outlines.length}.`,
-          );
-        }
-        if (active) setScienceLessons(outlines);
-      } catch (error) {
-        console.error("Could not load Grade 8 science lesson outlines:", error);
-        if (active) setScienceLessons(grade8ScienceIndex);
-      }
-    }
-
-    void loadScienceIndex();
-    window.addEventListener("online", loadScienceIndex);
-    return () => {
-      active = false;
-      window.removeEventListener("online", loadScienceIndex);
-    };
-  }, []);
-
-  const selectedGrade =
-    curriculumData.find(({ grade }) => grade === selectedGradeName) ??
-    curriculumData[0];
-  const selectedBook =
-    selectedGrade.books.find(({ bookId }) => bookId === selectedBookId) ??
-    selectedGrade.books[0];
-  const isGrade8Science = selectedBook.bookId === "grade8-science";
-  const isUrduDisplay =
-    selectedBook.medium === "Urdu Medium" || selectedBook.language === "ur";
-  const urduSubjectKey = isGrade8Science
-    ? "science"
-    : Object.keys(urduSubjectNames).find((subjectKey) =>
-        selectedBook.bookId.includes(`-${subjectKey}-`),
-      );
-  const displaySubject = isUrduDisplay
-    ? urduSubjectNames[urduSubjectKey] ?? selectedBook.subject
-    : selectedBook.subject;
-  const lessonPlanUrl = (lessonNumber = 1) => {
-    const params = new URLSearchParams({
-      bookId: selectedBook.bookId,
-      lessonNumber: String(lessonNumber),
-      month: selectedMonthKey,
-    });
-    return `/lesson-plan?${params}`;
-  };
-
-  const monthOptions = useMemo(() => {
-    const now = new Date();
-    const academicYearStart = now.getMonth() >= 3
-      ? now.getFullYear()
-      : now.getFullYear() - 1;
-    const options = Array.from({ length: 12 }, (_, index) => {
-      const date = new Date(academicYearStart, 3 + index, 1);
-      return {
-        name: new Intl.DateTimeFormat("en", { month: "long" }).format(date),
-        key: getCurrentMonthKey(date),
-      };
-    });
-    const previousDate = new Date(now.getFullYear(), now.getMonth() - 1, 1);
-    const previousKey = getCurrentMonthKey(previousDate);
-    if (!options.some(({ key }) => key === previousKey)) {
-      options.push({
-        name: new Intl.DateTimeFormat("en", { month: "long" }).format(previousDate),
-        key: previousKey,
-      });
-    }
-    return options.sort((first, second) => first.key.localeCompare(second.key));
-  }, []);
-  const selectedMonth = monthOptions.find(({ key }) => key === selectedMonthKey);
-  const selectedMonthName = selectedMonth?.name ?? monthOptions[0].name;
-  const selectedMonthSchedule =
-    selectedBook.academicSchedule[selectedMonthName];
-  const monthlyLessons = isGrade8Science
-    ? scienceLessons.map((lesson) => ({ ...lesson, month: selectedMonthKey }))
-    : selectedMonthSchedule
-      ? selectedBook.lessons
-          .filter(
-            ({ lessonNumber }) =>
-              lessonNumber >= selectedMonthSchedule.startLesson &&
-              lessonNumber <= selectedMonthSchedule.endLesson,
-          )
-          .map((lesson) => ({ ...lesson, month: selectedMonthKey }))
-      : [];
-  const tokens = userProfile?.tokens ?? {};
-  const unlockedLessons = userProfile?.unlockedLessons ?? {};
-
-  async function handleUnlock(lesson) {
-    setUnlockError("");
-    if (!currentUser) {
-      try {
-        await signIn();
-      } catch {
-        return;
-      }
-      return;
-    }
-
-    setBusyLessonId(lesson.id);
-    try {
-      const result = await unlockLesson(lesson);
-      if (result.success) {
-        window.location.assign(lessonPlanUrl(lesson.lessonNumber));
-      } else if (result.reason === "archived_window_closed") {
-        setUnlockError("This lesson is outside the current two-month access window.");
-      } else if (result.reason === "authentication_required") {
-        setUnlockError("Sign in to unlock this lesson.");
-      } else if (result.reason !== "insufficient_tokens") {
-        setUnlockError("Could not unlock this lesson.");
-      }
-    } catch (error) {
-      console.error("Could not unlock lesson:", error);
-      setUnlockError("Could not unlock this lesson. Please try again.");
-    } finally {
-      setBusyLessonId("");
-    }
-  }
-
-  return (
-    <main className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900 sm:px-6 sm:py-10">
-      <div className="mx-auto max-w-5xl">
-        <header className="mb-8 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="mb-2 text-sm font-medium text-indigo-600">Learning catalog</p>
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
-              Ustad Lesson Planner
-            </h1>
-          </div>
-          <div className="flex w-full flex-wrap items-center gap-3 sm:w-auto">
-            <InstallPrompt />
-            {isAdmin && (
-              <a
-                className="min-h-11 flex-1 content-center rounded-xl border border-amber-200 bg-white px-4 py-2 text-center text-sm font-semibold text-amber-800 transition hover:bg-amber-50 sm:flex-none"
-                href="/admin"
-              >
-                Admin Queue
-              </a>
-            )}
-            <a
-              className="min-h-11 flex-1 content-center rounded-xl border border-indigo-200 bg-white px-4 py-2 text-center text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50 sm:flex-none"
-              href={lessonPlanUrl()}
-              onClick={() =>
-                saveCatalogReturnSelection(
-                  selectedGradeName,
-                  selectedBook.bookId,
-                  selectedMonthKey,
-                )
-              }
-            >
-              Lesson plan
-            </a>
-            {currentUser ? (
-              <>
-                {balancePill(getCurrentMonthKey(), tokens)}
-                {balancePill(getPreviousMonthKey(), tokens)}
-                <span className="max-w-40 truncate text-sm text-slate-600">
-                  {currentUser.displayName || currentUser.email}
-                </span>
-                <button
-                  className="min-h-11 rounded-xl border border-slate-200 bg-white px-4 py-2 text-sm font-semibold text-slate-700"
-                  onClick={() => void signOut().catch(() => {})}
-                  type="button"
-                >
-                  Sign out
-                </button>
-                <button
-                  className="min-h-11 flex-1 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 sm:flex-none"
-                  onClick={() => openRechargeModal(selectedMonthKey)}
-                  type="button"
-                >
-                  Recharge tokens
-                </button>
-              </>
-            ) : (
-              <button
-                className="min-h-11 flex-1 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white sm:flex-none"
-                disabled={loading}
-                onClick={() => void signIn().catch(() => {})}
-                type="button"
-              >
-                {loading ? "Loading…" : "Sign in with Google"}
-              </button>
-            )}
-          </div>
-        </header>
-
-        {(profileError || authError) && (
-          <p className="mb-4 text-sm text-rose-700" role="alert">
-            {profileError || authError}
-          </p>
-        )}
-        {paymentMessage && (
-          <p
-            className="mb-4 rounded-xl border border-emerald-200 bg-emerald-50 p-4 text-sm text-emerald-800"
-            role="status"
-          >
-            {paymentMessage}
-          </p>
-        )}
-        <section
-          aria-label="Catalog filters"
-          className="mb-6 grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:grid-cols-3 sm:p-5"
-        >
-          <label className="grid gap-2 text-sm font-medium text-slate-700">
-            Grade
-            <select
-              className="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-              onChange={(event) => {
-                const nextGrade = curriculumData.find(
-                  ({ grade }) => grade === event.target.value,
-                );
-                const currentSubjectKey = subjectKeyForBook(selectedBook);
-                const matchingBook = nextGrade.books.find(
-                  (book) =>
-                    subjectKeyForBook(book) === currentSubjectKey &&
-                    book.language === selectedBook.language &&
-                    book.medium === selectedBook.medium,
-                );
-                setSelectedGradeName(event.target.value);
-                setSelectedBookId(
-                  matchingBook?.bookId ?? nextGrade.books[0].bookId,
-                );
-              }}
-              value={selectedGrade.grade}
-            >
-              {curriculumData.map(({ grade }) => (
-                <option key={grade} value={grade}>{grade}</option>
-              ))}
-            </select>
-          </label>
-
-          <label className="grid gap-2 text-sm font-medium text-slate-700">
-            Subject
-            <select
-              className="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-              onChange={(event) => setSelectedBookId(event.target.value)}
-              value={selectedBook.bookId}
-            >
-              {selectedGrade.books.map(({ bookId, subject }) => (
-                <option key={bookId} value={bookId}>{subject}</option>
-              ))}
-            </select>
-          </label>
-
-          <label className="grid gap-2 text-sm font-medium text-slate-700">
-            Academic month
-            <select
-              className="min-h-12 w-full rounded-xl border border-slate-300 bg-white px-3 text-base text-slate-900 outline-none focus:border-indigo-500 focus:ring-2 focus:ring-indigo-100"
-              onChange={(event) => setSelectedMonthKey(event.target.value)}
-              value={selectedMonthKey}
-            >
-              {monthOptions.map(({ key, name }) => (
-                <option disabled={key > getCurrentMonthKey()} key={key} value={key}>
-                  {name} {key.slice(0, 4)}{key === getCurrentMonthKey() ? " · Current" : ""}
-                </option>
-              ))}
-            </select>
-          </label>
-        </section>
-
-        <section aria-labelledby="book-title">
-          <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
-            <div
-              className={
-                isUrduDisplay
-                  ? "order-2 text-right sm:flex-1"
-                  : ""
-              }
-            >
-              <p className="mb-1 text-sm text-slate-500">
-                {isUrduDisplay
-                  ? `جماعت: ${urduGradeNames[selectedGrade.grade]}`
-                  : `${selectedGrade.grade} · ${selectedBook.subject}`}
-              </p>
-              <h2
-                className="text-xl font-semibold tracking-tight sm:text-2xl"
-                id="book-title"
-              >
-                {displaySubject}
-              </h2>
-            </div>
-            <p
-              className={`rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-600 ${
-                isUrduDisplay ? "order-1" : ""
-              }`}
-            >
-              {monthlyLessons.length} lessons in {selectedMonthName} {selectedMonthKey.slice(0, 4)}
-            </p>
-          </div>
-
-          {unlockError && (
-            <p className="mb-4 text-sm text-rose-700" role="alert">{unlockError}</p>
-          )}
-
-          {monthlyLessons.length > 0 ? (
-            <ol className="space-y-3">
-              {monthlyLessons.map((lesson) => {
-                const availability = isGrade8Science
-                  ? { canUnlock: true, scheduledMonth: null }
-                  : isLessonAvailable(
-                      lesson.lessonNumber,
-                      selectedMonthName,
-                      selectedBook.academicSchedule,
-                    );
-                const isExpired = !isMonthInActiveWindow(lesson.month);
-                const isUnlocked =
-                  unlockedLessons?.[lesson.month]?.includes(lesson.id) ?? false;
-                const canOpen = lesson.lessonNumber === 1 || isUnlocked;
-
-                return (
-                  <li
-                    className="flex flex-col gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm sm:flex-row sm:items-center sm:justify-between sm:p-5"
-                    key={lesson.id}
-                  >
-                    <div
-                      className={`min-w-0 sm:flex-1 ${isUrduDisplay ? "pr-2 sm:pr-4" : ""}`}
-                      dir={isUrduDisplay ? "rtl" : "ltr"}
-                    >
-                      <p className={`font-medium leading-6 text-slate-900 ${isUrduDisplay ? "text-right" : ""}`}>
-                        Lesson {lesson.lessonNumber}: {lesson.title}
-                      </p>
-                      <p className={`mt-1 text-sm text-slate-500 ${isUrduDisplay ? "text-right" : ""}`}>
-                        {lesson.chapterName}
-                      </p>
-                    </div>
-
-                    <div className="flex flex-wrap items-center gap-3 sm:shrink-0">
-                      {isExpired ? (
-                        <>
-                          <span className="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-500">
-                            Archived (Expired)
-                          </span>
-                          <button
-                            className="min-h-11 w-full cursor-not-allowed rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-400 sm:w-auto"
-                            disabled
-                            type="button"
-                          >
-                            Archived
-                          </button>
-                        </>
-                      ) : canOpen ? (
-                        <>
-                          <span className="rounded-full bg-emerald-50 px-3 py-1.5 text-sm font-medium text-emerald-700">
-                            {lesson.lessonNumber === 1 ? "Free Sample" : "Unlocked"}
-                          </span>
-                          <a
-                            className={`min-h-11 w-full rounded-xl px-4 py-2 text-center text-sm font-semibold text-white transition sm:w-auto ${
-                              isGrade8Science && lesson.lessonNumber === 1
-                                ? "bg-emerald-700 hover:bg-emerald-800"
-                                : "bg-indigo-600 hover:bg-indigo-700"
-                            }`}
-                            href={lessonPlanUrl(lesson.lessonNumber)}
-                            onClick={() =>
-                              saveCatalogReturnSelection(
-                                selectedGradeName,
-                                selectedBook.bookId,
-                                selectedMonthKey,
-                              )
-                            }
-                          >
-                            Open Lesson
-                          </a>
-                        </>
-                      ) : !availability.canUnlock ? (
-                        <>
-                          <span className="rounded-full bg-slate-100 px-3 py-1.5 text-sm font-medium text-slate-500">
-                            Locked until {availability.scheduledMonth}
-                          </span>
-                          <button
-                            className="min-h-11 w-full cursor-not-allowed rounded-xl bg-slate-100 px-4 py-2 text-sm font-semibold text-slate-400 sm:w-auto"
-                            disabled
-                            type="button"
-                          >
-                            Unlock
-                          </button>
-                        </>
-                      ) : (
-                        <button
-                          className="min-h-11 w-full rounded-xl border border-indigo-200 bg-indigo-50 px-4 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-100 disabled:opacity-60 sm:w-auto"
-                          disabled={busyLessonId === lesson.id || loading}
-                          onClick={() => void handleUnlock(lesson)}
-                          type="button"
-                        >
-                          {isGrade8Science
-                            ? "Unlock (1 Token)"
-                            : currentUser
-                              ? `Unlock (1 Token - ${selectedMonthName})`
-                              : "Sign in to unlock"}
-                        </button>
-                      )}
-                    </div>
-                  </li>
-                );
-              })}
-            </ol>
-          ) : (
-            <p className="rounded-2xl border border-slate-200 bg-white p-6 text-center text-slate-600 shadow-sm">
-              No lessons are scheduled for {selectedMonthName}.
-            </p>
-          )}
-        </section>
-      </div>
-      <RechargeModal
-        isOpen={Boolean(rechargeTargetMonth)}
-        initialTargetMonth={rechargeTargetMonth}
-        onClose={closeRechargeModal}
-        onSubmitted={() => setPaymentMessage("Payment request submitted. Tokens will be credited after admin verification.")}
-      />
-    </main>
-  );
+  const path = window.location.pathname.replace(/\/+$/, "") || "/";
+  const parts = path.split("/").filter(Boolean);
+  let page;
+  if (path === "/") page = <HomePage />;
+  else if (path === "/classes") page = <ClassesPage />;
+  else if (parts[0] === "classes" && parts.length === 2) page = <SubjectsPage number={parts[1]} />;
+  else if (parts[0] === "classes" && parts.length === 3) page = <LessonsPage number={parts[1]} bookId={decodeURIComponent(parts[2])} />;
+  else if (path === "/pricing") page = <PlansPage />;
+  else if (path === "/profile") page = <ProfilePage />;
+  else page = <NotAvailable />;
+  return <SiteShell><main className="ustad-main">{page}</main></SiteShell>;
 }
