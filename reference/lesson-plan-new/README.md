@@ -63,7 +63,7 @@ Use `<LessonPlanEditor />` instead of `<LessonPlanC />` to let teachers edit:
 
 ```jsx
 <LessonPlanC / LessonPlanEditor
-  edgeHeadings={true}    // capsule + minutes pill sit on the box border. Default: true for Urdu, false for English
+  edgeHeadings={true}    // capsule + minutes pill sit on the box border (default true, both languages)
   urFontSize={17}        // Urdu text size in px (default 17)
   urLineHeight={1.55}    // Urdu line spacing (default 1.55)
   capsules={true}        // false = plain headings

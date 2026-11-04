@@ -122,7 +122,7 @@ function Banner({ l, b, S, ur, onEdit }) {
 export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, capsules = true, editable = false, onEdit, onLayout, edgeHeadings, urFontSize = 17, urLineHeight = 1.55 }) {
   const S = STRINGS[lang] ?? STRINGS.en;
   const ur = lang === 'ur';
-  const edge = edgeHeadings ?? ur; // headings on the border: on for Urdu, off for English by default
+  const edge = edgeHeadings ?? true; // headings on the border (on by default, both languages)
   const b = { ...DEFAULT_BRANDING, ...branding };
   const mins = phaseMinutes(l);
 

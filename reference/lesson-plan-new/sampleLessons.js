@@ -6,32 +6,32 @@ export const lessonEn = {
   minutes: 40, // periods are derived (over 60 min = 2 periods)
   // timing: [5, 20, 5, 10], // optional teacher override: intro, development, conclusion, assessment
   materials: 'Matchsticks, whiteboard, textbook',
-  slos: ['Recognize factors of numbers up to 3-digit', 'Recognize multiples of numbers up to 2-digit'],
+  slos: ['Recognize factors up to 3-digit numbers and multiples up to 2-digit numbers'],
   teacherInfo: [
-    { lead: 'Factor:', text: 'divides a number completely, leaving remainder zero.' },
-    { lead: 'Multiple:', text: 'the product of a number and another number.' },
-    'Every number above 1 has at least two factors: 1 and itself.',
+    { lead: 'Factor:', text: 'divides with remainder zero.' },
+    { lead: 'Multiple:', text: 'product of a number and another.' },
+    'Every number above 1 has factors 1 and itself.',
   ],
-  introduction: ['List all whole numbers that divide 12 exactly.', 'Skip-count by 5s to connect with multiples.'],
+  introduction: ['List all whole numbers that divide 12 exactly.', 'Skip-count by 5s to link with multiples.'],
   development: [
-    { lead: 'Matchstick multiples:', text: 'groups of 3 sticks to build 3, 6, 9…' },
-    { lead: 'Division method:', text: 'test whether 3 is a factor of 42.' },
-    { lead: 'Generating multiples:', text: 'first five multiples of 13.' },
+    { lead: 'Matchstick multiples.', text: 'Groups of 3 build 3, 6, 9…' },
+    { lead: 'Division method.', text: 'Is 3 a factor of 42?' },
+    { lead: 'Generate multiples.', text: 'First five of 13.' },
   ],
-  conclusion: ['Factors are divisors; multiples are products in the table.', 'A number is always its own factor and multiple.'],
-  assessment: ['Is 5 a factor of 42? Why or why not?', 'List the first six multiples of 7.', 'Which are multiples of 13: 39, 45, 65, 99?'],
+  conclusion: ['Factors are divisors; multiples are products.', 'A number is its own factor and multiple.'],
+  assessment: ['Is 5 a factor of 42? Why or why not?', 'List the first six multiples of 7.', 'Multiples of 13: 39, 45, 65, 99?'],
   followUp: [
-    { lead: 'Homework:', text: 'factors of 36 and 45; multiples of 19 and 43.' },
-    { lead: 'Project:', text: 'find 2–3 digit numbers in a newspaper and list their factors.' },
+    { lead: 'Homework:', text: 'factors of 36, 45; multiples of 19, 43.' },
+    { lead: 'Project:', text: 'newspaper numbers, factors and multiples.' },
   ],
 };
 
 export const lessonUr = {
   lessonNo: 1, classLabel: 'جماعت ششم', subject: 'ریاضی',
-  domain: 'اعداد اور اعمال', subDomain: 'اجزائے ضربی اور مضاعفات', topic: 'اجزائے ضربی اور اضعاف',
-  minutes: 40,
+  domain: 'اعداد اور اعمال', subDomain: 'اجزائے ضربی اور مضاعفات یا اضعاف', topic: 'اجزائے ضربی اور اضعاف',
+  minutes: 30,
   materials: 'ماچس کی تیلیاں، وائٹ بورڈ، نصابی کتاب',
-  slos: ['3 ہندسوں تک کے اعداد کے اجزائے ضربی کی پہچان', '2 ہندسوں تک کے اعداد کے مضاعفات کی پہچان'],
+  slos: ['3 ہندسوں تک کے اعداد کے اجزائے ضربی اور 2 ہندسوں تک کے اعداد کے مضاعفات کی پہچان'],
   teacherInfo: [
     { lead: 'جزوِ ضربی:', text: 'وہ عدد جو کسی عدد کو مکمل تقسیم کرے (باقی صفر)۔' },
     { lead: 'اضعاف:', text: 'دو اعداد کا حاصلِ ضرب۔' },
@@ -41,7 +41,6 @@ export const lessonUr = {
   development: [
     { lead: 'ماچس کی تیلیوں سے مضاعفات:', text: '3 تیلیوں کے گروہ بنا کر 3، 6، 9 ... بنائیں۔' },
     { lead: 'تقسیم کا طریقہ:', text: 'کیا 3، عدد 42 کا جزوِ ضربی ہے؟' },
-    { lead: 'مضاعفات بنائیں:', text: '13 کے پہلے پانچ مضاعفات لکھیں۔' },
   ],
   conclusion: ['جزوِ ضربی مقسوم علیہ ہوتے ہیں اور مضاعفات پہاڑے کے حاصلِ ضرب۔', 'ہر عدد اپنا جزوِ ضربی بھی ہے اور اپنا مضاعف بھی۔'],
   assessment: ['کیا 5، عدد 42 کا جزوِ ضربی ہے؟ کیوں یا کیوں نہیں؟', '7 کے پہلے چھ مضاعفات لکھیں۔', '13 کے مضاعفات کون سے ہیں: 39، 45، 65، 99؟'],

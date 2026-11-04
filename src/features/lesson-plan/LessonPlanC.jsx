@@ -137,7 +137,7 @@ function Footer({ b, S, page, pages }) {
 export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, capsules = true, editable = false, onEdit, onLayout, edgeHeadings, urFontSize = 17, urLineHeight = 1.55 }) {
   const S = STRINGS[lang] ?? STRINGS.en;
   const ur = lang === 'ur';
-  const edge = edgeHeadings ?? ur;
+  const edge = edgeHeadings ?? true;
   const b = { ...DEFAULT_BRANDING, ...branding };
   const mins = phaseMinutes(l);
 
@@ -249,7 +249,9 @@ export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, cap
         }
       });
       root.querySelectorAll('.lpc-pill').forEach((el) => {
-        const width = el.getBoundingClientRect().width;
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const width = range.getBoundingClientRect().width;
         if (width > pillWidth) {
           pillWidth = width;
           pill = el.textContent.trim();
