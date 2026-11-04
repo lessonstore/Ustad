@@ -6,6 +6,7 @@ import { useUser } from "../../context/UserContext.jsx";
 import InstallPrompt from "../../components/InstallPrompt.jsx";
 import { curriculumData } from "../../data/curriculumData.js";
 import { getCurrentMonthKey } from "../../utils/monthUtils.js";
+import { navigateTo } from "../../utils/navigation.js";
 import { LESSON_COST } from "../tokens/plans.js";
 import "./LessonPlanScreen.css";
 
@@ -198,7 +199,7 @@ export default function LessonPlanScreen() {
       if (result.success) {
         setPurchaseConfirm(false);
       } else if (result.reason === "insufficient_tokens") {
-        window.location.assign("/pricing");
+        navigateTo("/pricing");
       } else {
         setPurchaseError("Could not purchase this lesson. Please try again.");
       }

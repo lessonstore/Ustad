@@ -1,26 +1,24 @@
 :root {
-  --ustad-bg: #f7f6f0;
-  --ustad-ink: #172f29;
-  --ustad-primary: #235d4c;
-  --ustad-gold: #ddb75b;
-  --ustad-border: #dedfd6;
-  --ustad-muted: #707b75;
+  --ustad-bg: var(--background);
+  --ustad-ink: var(--foreground);
+  --ustad-primary: var(--primary);
+  --ustad-gold: var(--gold);
+  --ustad-border: var(--border);
+  --ustad-muted: var(--muted-foreground);
 }
 
 .ustad-shell { min-height: 100vh; display: flex; flex-direction: column; background: var(--ustad-bg); color: var(--ustad-ink); }
-.ustad-header { position: sticky; top: 0; z-index: 40; border-bottom: 1px solid #e4e6dfcc; background: #f7f6f0eF; backdrop-filter: blur(16px); }
+.ustad-header { position: sticky; top: 0; z-index: 40; border-bottom: 1px solid color-mix(in oklch,var(--border) 60%,transparent); background: color-mix(in oklch,var(--background) 80%,transparent); backdrop-filter: blur(16px); }
 .ustad-header-inner { max-width: 1152px; min-height: 66px; margin: auto; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
 .ustad-brand { display: flex; min-width: 0; align-items: center; gap: 10px; color: inherit; text-decoration: none; }
-.ustad-brand-icon { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 12px; color: white; background: linear-gradient(135deg,#235d4c,#4e8d70); box-shadow: 0 8px 24px #235d4c2b; }
-.ustad-brand b { display: block; font-size: 19px; line-height: 1.15; letter-spacing: .01em; }
-.ustad-brand small { display: block; overflow: hidden; max-width: 270px; color: var(--ustad-muted); font-size: 10px; text-overflow: ellipsis; white-space: nowrap; }
+.ustad-brand-icon { width: 40px; height: 40px; flex: none; display: grid; place-items: center; border-radius: 12px; color: var(--primary-foreground); background: var(--gradient-primary); box-shadow: var(--shadow-soft); }
+.ustad-brand b { display: block; font-family: var(--font-display); font-size: 20px; line-height: 1.15; letter-spacing: .01em; }
 .ustad-desktop-nav { display: flex; align-items: center; gap: 6px; font-size: 14px; font-weight: 600; }
-.ustad-desktop-nav>a,.ustad-signin { padding: 9px 13px; border: 0; border-radius: 9px; color: inherit; background: transparent; text-decoration: none; cursor: pointer; }
-.ustad-desktop-nav>a:hover,.ustad-signin:hover { background: #e7ece5; }
-.ustad-desktop-nav .ustad-wallet-link { display: inline-flex; align-items: center; gap: 7px; color: var(--ustad-primary); background: #e5eee7; }
+.ustad-desktop-nav>a,.ustad-signin { padding: 8px 12px; border: 0; border-radius: 9px; color: inherit; background: transparent; text-decoration: none; cursor: pointer; }
+.ustad-desktop-nav>a:hover,.ustad-signin:hover,.ustad-desktop-nav>a.is-active { background: var(--secondary); }
+.ustad-desktop-nav .ustad-signin { margin-left: 4px; color: var(--primary-foreground); background: var(--gradient-primary); }
+.ustad-desktop-nav .ustad-wallet-link { display: inline-flex; align-items: center; gap: 7px; margin-left: 4px; color: var(--ustad-primary); background: var(--secondary); }
 .ustad-mobile-wallet { display: none; }
-.ustad-install-prompt:empty { display: none; }
-.ustad-install-prompt button { min-height: 38px; padding: 7px 10px; border: 1px solid var(--ustad-border); border-radius: 9px; color: var(--ustad-primary); background: #fffefa; font-size: 12px; font-weight: 700; }
 .ustad-main { flex: 1; padding-bottom: 0; }
 .ustad-footer { padding: 26px 16px; border-top: 1px solid var(--ustad-border); color: var(--ustad-muted); font-size: 13px; text-align: center; }
 .ustad-mobile-nav { display: none; }
@@ -28,7 +26,7 @@
 .ustad-hero::before { position: absolute; inset: 0; pointer-events: none; content: ""; opacity: .14; background-image: radial-gradient(#fff 1px,transparent 1px); background-size: 22px 22px; }
 .ustad-hero-inner { position: relative; display: grid; grid-template-columns: 1.15fr .85fr; align-items: center; gap: 52px; max-width: 1152px; margin: auto; padding: 76px 20px; }
 .ustad-eyebrow { display: inline-flex; padding: 6px 12px; border: 1px solid #ddb75b66; border-radius: 99px; color: var(--ustad-gold); background: #ddb75b18; font-size: 11px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.ustad-hero h1 { margin: 20px 0 0; font-family: Georgia,serif; font-size: clamp(42px,6vw,72px); font-weight: 600; letter-spacing: -.045em; line-height: 1.05; }
+.ustad-hero h1 { margin: 20px 0 0; font-family: var(--font-display); font-size: clamp(42px,6vw,72px); font-weight: 600; letter-spacing: -.045em; line-height: 1.05; }
 .ustad-hero h1 em { color: var(--ustad-gold); }
 .ustad-hero p { max-width: 540px; margin: 20px 0 0; color: #f9f8f2bd; font-size: 17px; line-height: 1.7; }
 .ustad-primary-link,.ustad-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; padding: 12px 19px; border: 0; border-radius: 12px; color: white; background: linear-gradient(135deg,#28644f,#488667); box-shadow: 0 12px 30px #102e2440; font-weight: 700; text-decoration: none; cursor: pointer; }
@@ -36,7 +34,7 @@
 .ustad-hero-action { margin-top: 26px; }
 .ustad-sale-note { display: inline-block; margin-top: 15px; padding: 6px 11px; border-radius: 99px; color: #382908; background: var(--ustad-gold); font-size: 11px; font-weight: 800; }
 .ustad-stats { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 16px; max-width: 440px; margin-top: 42px; }
-.ustad-stat strong { display: block; color: white; font-family: Georgia,serif; font-size: 25px; }
+.ustad-stat strong { display: block; color: white; font-family: var(--font-display); font-size: 25px; }
 .ustad-stat span { color: #f9f8f299; font-size: 12px; }
 .ustad-hero-cards { position: relative; min-height: 300px; }
 .ustad-float-card { position: absolute; width: min(76%,330px); padding: 18px; border: 1px solid #ffffff20; border-radius: 18px; background: #ffffff10; box-shadow: 0 18px 45px #051c1740; backdrop-filter: blur(9px); }
@@ -49,21 +47,21 @@
 .ustad-section { max-width: 1152px; margin: auto; padding: 64px 20px; }
 .ustad-section-heading { margin-bottom: 26px; }
 .ustad-section-heading p { margin: 0; color: var(--ustad-primary); font-size: 12px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
-.ustad-section-heading h2 { margin: 8px 0 0; font-family: Georgia,serif; font-size: clamp(28px,4vw,40px); font-weight: 600; }
+.ustad-section-heading h2 { margin: 8px 0 0; font-family: var(--font-display); font-size: clamp(28px,4vw,40px); font-weight: 600; }
 .ustad-section-heading>span { display: block; margin-top: 7px; color: var(--ustad-muted); font-size: 14px; }
-.ustad-section-heading>h1 { margin: 8px 0 0; font-family: Georgia,serif; font-size: clamp(32px,5vw,48px); }
+.ustad-section-heading>h1 { margin: 8px 0 0; font-family: var(--font-display); font-size: clamp(32px,5vw,48px); }
 .ustad-class-grid { display: grid; grid-template-columns: repeat(5,minmax(0,1fr)); gap: 14px; }
 .ustad-class-card,.ustad-subject-card,.ustad-lesson-card,.ustad-plan-card { position: relative; overflow: hidden; padding: 19px; border: 1px solid var(--ustad-border); border-radius: 18px; color: inherit; background: #fffefa; text-decoration: none; box-shadow: 0 8px 25px #1e3e2910; transition: transform .25s,box-shadow .25s; }
 .ustad-class-card:hover,.ustad-subject-card:hover,.ustad-lesson-card:hover,.ustad-plan-card:hover { transform: translateY(-4px); box-shadow: 0 18px 36px #1e3e2918; }
 .ustad-class-card[aria-disabled="true"] { opacity: .62; cursor: default; }
 .ustad-class-card[aria-disabled="true"]:hover { transform: none; box-shadow: 0 8px 25px #1e3e2910; }
-.ustad-class-number { position: absolute; top: -19px; right: 7px; color: #e5e6db; font-family: Georgia,serif; font-size: 83px; font-weight: 700; line-height: 1; }
+.ustad-class-number { position: absolute; top: -19px; right: 7px; color: #e5e6db; font-family: var(--font-display); font-size: 83px; font-weight: 700; line-height: 1; }
 .ustad-class-card small,.ustad-subject-card small { position: relative; color: var(--ustad-muted); font-size: 11px; }
-.ustad-class-card h3,.ustad-subject-card h3 { position: relative; margin: 29px 0 6px; font-family: Georgia,serif; font-size: 20px; }
+.ustad-class-card h3,.ustad-subject-card h3 { position: relative; margin: 29px 0 6px; font-family: var(--font-display); font-size: 20px; }
 .ustad-class-card p { margin: 0; color: var(--ustad-muted); font-size: 14px; }
 .ustad-coming { display: inline-block; margin-top: 14px; padding: 4px 8px; border-radius: 99px; color: #796028; background: #f4edda; font-size: 10px; font-weight: 700; }
 .ustad-group { margin-top: 36px; }
-.ustad-group h2 { margin: 0 0 16px; font-family: Georgia,serif; font-size: 23px; }
+.ustad-group h2 { margin: 0 0 16px; font-family: var(--font-display); font-size: 23px; }
 .ustad-group h2::before { display: inline-block; width: 8px; height: 8px; margin: 0 11px 3px 0; border-radius: 50%; background: var(--ustad-gold); content: ""; }
 .ustad-subject-grid { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 14px; }
 .ustad-subject-card { display: block; }
@@ -76,7 +74,7 @@
 .ustad-lesson-card { display: flex; align-items: center; gap: 16px; padding: 13px 16px; }
 .ustad-week { width: 54px; height: 54px; flex: none; display: grid; align-content: center; border-radius: 13px; color: var(--ustad-primary); background: #e9eee7; text-align: center; }
 .ustad-week small { font-size: 9px; text-transform: uppercase; }
-.ustad-week b { font-family: Georgia,serif; font-size: 20px; line-height: 1.1; }
+.ustad-week b { font-family: var(--font-display); font-size: 20px; line-height: 1.1; }
 .ustad-lesson-info { min-width: 0; flex: 1; }
 .ustad-lesson-info b { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .ustad-lesson-info small { display: block; margin-top: 5px; color: var(--ustad-muted); font-size: 11px; }
@@ -86,26 +84,26 @@
 .ustad-plan-card { display: flex; flex-direction: column; min-height: 310px; padding: 22px; }
 .ustad-plan-card.is-popular { border: 2px solid var(--ustad-primary); }
 .ustad-plan-popular { position: absolute; top: 0; left: 18px; padding: 5px 9px; border-radius: 0 0 9px 9px; color: #3a2a08; background: var(--ustad-gold); font-size: 10px; font-weight: 800; }
-.ustad-plan-card h2 { margin: 0; font-family: Georgia,serif; font-size: 24px; }
+.ustad-plan-card h2 { margin: 0; font-family: var(--font-display); font-size: 24px; }
 .ustad-plan-sale { margin-top: 17px; color: var(--ustad-muted); font-size: 12px; }
 .ustad-plan-sale del { margin-right: 7px; }
 .ustad-plan-sale b { margin-left: 6px; padding: 3px 6px; border-radius: 99px; color: #8a3232; background: #f5e5e3; font-size: 9px; }
-.ustad-plan-price { margin-top: 2px; font-family: Georgia,serif; font-size: 35px; font-weight: 700; }
+.ustad-plan-price { margin-top: 2px; font-family: var(--font-display); font-size: 35px; font-weight: 700; }
 .ustad-plan-tokens { display: flex; align-items: center; gap: 6px; margin-top: 6px; color: var(--ustad-primary); font-size: 14px; font-weight: 700; }
 .ustad-plan-card p { flex: 1; margin: 15px 0; color: var(--ustad-muted); font-size: 13px; }
 .ustad-plan-card button { width: 100%; }
 .ustad-page-hero { color: white; background: radial-gradient(110% 100% at 78% 0%,#285d4d,#142f2b 65%); }
 .ustad-page-hero-inner { max-width: 1152px; margin: auto; padding: 38px 20px; }
-.ustad-page-hero h1 { margin: 6px 0; font-family: Georgia,serif; font-size: clamp(34px,5vw,52px); }
+.ustad-page-hero h1 { margin: 6px 0; font-family: var(--font-display); font-size: clamp(34px,5vw,52px); }
 .ustad-page-hero p { margin: 7px 0; color: #ffffffb8; }
 .ustad-profile-grid { display: grid; grid-template-columns: .8fr 1.2fr; gap: 18px; }
 .ustad-profile-card { padding: 24px; border: 1px solid var(--ustad-border); border-radius: 20px; background: #fffefa; }
-.ustad-profile-card h2 { margin: 0 0 12px; font-family: Georgia,serif; }
-.ustad-profile-balance { margin: 14px 0; color: var(--ustad-primary); font-family: Georgia,serif; font-size: 50px; font-weight: 700; }
+.ustad-profile-card h2 { margin: 0 0 12px; font-family: var(--font-display); }
+.ustad-profile-balance { margin: 14px 0; color: var(--ustad-primary); font-family: var(--font-display); font-size: 50px; font-weight: 700; }
 .ustad-empty { padding: 26px; color: var(--ustad-muted); text-align: center; }
 .ustad-profile-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .ustad-profile-actions { display: flex; flex-wrap: wrap; gap: 8px; }
-.ustad-profile-heading h1,.ustad-history-title { font-family: Georgia,serif; font-size: 32px; }
+.ustad-profile-heading h1,.ustad-history-title { font-family: var(--font-display); font-size: 32px; }
 .ustad-outline-button { padding: 9px 13px; border: 1px solid var(--ustad-border); border-radius: 10px; background: #fffefa; cursor: pointer; }
 .ustad-profile-wallet { color: #f9f8f2; background: radial-gradient(120% 90% at 80% 0%,#285d4d,#142f2b 62%); }
 .ustad-profile-wallet p { color: #ffffffbd; }
@@ -115,7 +113,7 @@
 .ustad-payment-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 15px; border: 1px solid var(--ustad-border); border-radius: 14px; background: #fffefa; }
 .ustad-payment-row small { display: block; margin-top: 5px; color: var(--ustad-muted); }
 .ustad-auth-card { max-width: 520px; margin: auto; }
-.ustad-auth-card h1 { font-family: Georgia,serif; font-size: 32px; }
+.ustad-auth-card h1 { font-family: var(--font-display); font-size: 32px; }
 .ustad-status { padding: 4px 9px; border-radius: 99px; font-size: 11px; font-weight: 700; text-transform: capitalize; }
 .ustad-status-pending { color: #795b18; background: #f5edda; }
 .ustad-status-approved { color: #21573e; background: #e4efe6; }
@@ -124,7 +122,7 @@
 .ustad-success-alert { margin: 0 0 16px; padding: 12px 15px; border: 1px solid #b9d8c4; border-radius: 12px; color: #21573e; background: #eaf3ec; font-size: 13px; }
 .ustad-recharge-overlay { background: #11251fc9; backdrop-filter: blur(5px); }
 .ustad-recharge-panel { border: 1px solid var(--ustad-border); border-radius: 24px; color: var(--ustad-ink); background: #fffefa; }
-.ustad-recharge-panel h2 { font-family: Georgia,serif; }
+.ustad-recharge-panel h2 { font-family: var(--font-display); }
 .ustad-recharge-info { border: 1px solid #bcd4c3; color: #214f3a; background: #eaf2eb; }
 .ustad-recharge-copy { border: 0; color: white; background: var(--ustad-primary); }
 .ustad-recharge-close { color: var(--ustad-muted); }
@@ -139,7 +137,7 @@
 .ustad-purchase-card { width: min(100%,520px); margin: 38px auto; padding: 32px; border: 1px solid var(--ustad-border); border-radius: 24px; background: #fffefa; text-align: center; box-shadow: 0 16px 42px #1e3e2912; }
 .ustad-purchase-icon { width: 58px; height: 58px; display: grid; place-items: center; margin: 0 auto 17px; border-radius: 17px; color: var(--ustad-primary); background: #e6eee6; }
 .ustad-purchase-card .ustad-eyebrow { border-color: #235d4c30; color: var(--ustad-primary); background: #e9eee7; }
-.ustad-purchase-card h1 { margin: 15px 0; font-family: Georgia,serif; font-size: 30px; }
+.ustad-purchase-card h1 { margin: 15px 0; font-family: var(--font-display); font-size: 30px; }
 .ustad-purchase-card>p { color: var(--ustad-muted); line-height: 1.6; }
 .ustad-purchase-balance { display: flex; align-items: center; justify-content: center; gap: 7px; color: var(--ustad-primary) !important; font-weight: 700; }
 .ustad-purchase-error { color: #a63333 !important; font-size: 13px; }
@@ -148,15 +146,15 @@
 .ustad-cancel-button { margin-left: 12px; padding: 11px 15px; border: 1px solid var(--ustad-border); border-radius: 11px; background: white; cursor: pointer; }
 .ustad-pricing-link { display: block; margin-top: 13px; color: var(--ustad-primary); font-size: 13px; font-weight: 700; }
 
-@media (max-width: 800px) {
+@media (max-width: 767px) {
   .ustad-header-inner { min-height: 60px; padding-inline: 14px; }
   .ustad-desktop-nav { display: none; }
-  .ustad-install-prompt { display: none; }
-  .ustad-mobile-wallet { display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border: 0; border-radius: 10px; color: var(--ustad-primary); background: #e5eee7; font-size: 12px; font-weight: 700; text-decoration: none; }
-  .ustad-main { padding-bottom: 60px; }
-  .ustad-footer { padding-bottom: 84px; }
-  .ustad-mobile-nav { position: fixed; right: 0; bottom: 0; left: 0; z-index: 50; display: flex; justify-content: space-around; padding: 6px 8px calc(7px + env(safe-area-inset-bottom)); border-top: 1px solid var(--ustad-border); background: #f7f6f0ed; backdrop-filter: blur(14px); }
-  .ustad-mobile-nav a,.ustad-mobile-nav button { display: flex; flex: 1; flex-direction: column; align-items: center; gap: 3px; border: 0; color: var(--ustad-muted); background: transparent; font-size: 10px; font-weight: 700; text-decoration: none; }
+  .ustad-mobile-wallet { display: inline-flex; align-items: center; gap: 6px; padding: 8px 10px; border: 0; border-radius: 10px; color: var(--ustad-primary); background: var(--secondary); font-size: 12px; font-weight: 700; text-decoration: none; }
+  .ustad-main { padding-bottom: 80px; }
+  .ustad-footer { padding: 26px 16px 96px; }
+  .ustad-mobile-nav { position: fixed; right: 0; bottom: 0; left: 0; z-index: 50; display: flex; justify-content: space-around; padding: 6px 8px calc(7px + env(safe-area-inset-bottom)); border-top: 1px solid var(--ustad-border); background: color-mix(in oklch,var(--background) 90%,transparent); backdrop-filter: blur(14px); }
+  .ustad-mobile-nav a,.ustad-mobile-nav button { display: flex; flex: 1; flex-direction: column; align-items: center; gap: 3px; border: 0; color: var(--ustad-muted); background: transparent; font-size: 11px; font-weight: 700; text-decoration: none; }
+  .ustad-mobile-nav a.is-active { color: var(--ustad-primary); }
   .ustad-hero-inner { grid-template-columns: 1fr; padding-block: 51px; }
   .ustad-hero-cards { display: none; }
   .ustad-class-grid { grid-template-columns: repeat(2,minmax(0,1fr)); }
@@ -177,4 +175,8 @@
 }
 @media (prefers-reduced-motion: reduce) {
   .ustad-class-card,.ustad-subject-card,.ustad-lesson-card,.ustad-plan-card { transition: none; }
+}
+.header-subtitle-roll { animation: marquee 48s linear infinite; }
+@media (prefers-reduced-motion: reduce) {
+  .header-subtitle-roll { animation: none; }
 }

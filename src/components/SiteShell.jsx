@@ -1,7 +1,7 @@
 import { useUser } from "../context/UserContext.jsx";
 import { getCurrentMonthKey } from "../utils/monthUtils.js";
 import UiIcon from "./UiIcon.jsx";
-import InstallPrompt from "./InstallPrompt.jsx";
+import HeaderSubtitle from "./HeaderSubtitle.jsx";
 
 const links = [
   { href: "/", label: "Home", icon: "home" },
@@ -10,8 +10,10 @@ const links = [
 ];
 
 export default function SiteShell({ children }) {
-  const { currentUser, userProfile, loading, signIn, isAdmin, authError, profileError } = useUser();
+  const { currentUser, userProfile, isAdmin, authError, profileError } = useUser();
   const balance = Number(userProfile?.tokens?.[getCurrentMonthKey()] ?? 0);
+  const path = window.location.pathname;
+  const isActive = (href) => path === href || (href !== "/" && path.startsWith(`${href}/`));
 
   return (
     <div className="ustad-shell">
@@ -19,26 +21,23 @@ export default function SiteShell({ children }) {
         <div className="ustad-header-inner">
           <a className="ustad-brand" href="/">
             <span className="ustad-brand-icon"><UiIcon name="graduation" size={22} /></span>
-            <span><b>USTAD</b><small>Unique Smart Teacher Assistant Dashboard</small></span>
+            <span className="min-w-0 leading-tight"><b>USTAD</b><HeaderSubtitle /></span>
           </a>
           <nav className="ustad-desktop-nav" aria-label="Main navigation">
-            {links.map(({ href, label }) => <a href={href} key={href}>{label}</a>)}
-            {isAdmin && <a href="/admin">Admin</a>}
+            {links.map(({ href, label }) => <a className={isActive(href) ? "is-active" : ""} href={href} key={href}>{label}</a>)}
+            {isAdmin && <a className={isActive("/admin") ? "is-active" : ""} href="/admin">Admin</a>}
             {currentUser ? (
-              <a className="ustad-wallet-link" href="/profile"><UiIcon name="coins" size={16} /> {balance.toLocaleString()} tokens <UiIcon name="user" size={16} /></a>
+              <a className="ustad-wallet-link" href="/profile"><UiIcon name="coins" size={16} /><b>{balance.toLocaleString()}</b><span>tokens</span><UiIcon name="user" size={16} /></a>
             ) : (
-              <button className="ustad-signin" disabled={loading} onClick={() => void signIn().catch(() => {})} type="button">Sign in</button>
+              <a className="ustad-signin" href="/auth">Sign in</a>
             )}
           </nav>
-          <div className="ustad-install-prompt"><InstallPrompt /></div>
           {currentUser ? (
-            <a className="ustad-mobile-wallet" href="/profile" aria-label={`${balance} tokens`}>
-              <UiIcon name="coins" size={17} /> {balance.toLocaleString()}
+            <a className="ustad-mobile-wallet" href="/profile" title="Your token balance">
+              <UiIcon name="coins" size={16} /><b>{balance.toLocaleString()}</b><span>tokens</span>
             </a>
           ) : (
-            <button className="ustad-mobile-wallet" disabled={loading} onClick={() => void signIn().catch(() => {})} type="button">
-              <UiIcon name="login" size={16} /> Sign in
-            </button>
+            <a className="ustad-mobile-wallet" href="/pricing"><UiIcon name="coins" size={16} />Get tokens</a>
           )}
         </div>
       </header>
@@ -46,10 +45,10 @@ export default function SiteShell({ children }) {
       <div className="ustad-main">{children}</div>
       <footer className="ustad-footer">USTAD · Built for teachers of School Education Department, Punjab</footer>
       <nav className="ustad-mobile-nav" aria-label="Mobile navigation">
-        {links.map(({ href, label, icon }) => <a href={href} key={href}><UiIcon name={icon} size={20} /><span>{label}</span></a>)}
+        {links.map(({ href, label, icon }) => <a className={isActive(href) ? "is-active" : ""} href={href} key={href}><UiIcon name={icon} size={20} /><span>{label}</span></a>)}
         {currentUser
           ? <a href="/profile"><UiIcon name="user" size={20} /><span>Profile</span></a>
-          : <button disabled={loading} onClick={() => void signIn().catch(() => {})} type="button"><UiIcon name="login" size={20} /><span>Sign in</span></button>}
+          : <a className={isActive("/auth") ? "is-active" : ""} href="/auth"><UiIcon name="login" size={20} /><span>Sign in</span></a>}
       </nav>
     </div>
   );

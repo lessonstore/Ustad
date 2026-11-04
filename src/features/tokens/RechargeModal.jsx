@@ -244,7 +244,7 @@ export default function RechargeModal({
           </div>
 
           {error && (
-            <p className="text-sm font-medium text-rose-700" role="alert">
+            <p className="text-sm font-medium text-destructive" role="alert">
               {error}
             </p>
           )}

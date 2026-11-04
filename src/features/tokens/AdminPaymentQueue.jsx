@@ -25,6 +25,7 @@ const plans = {
 export default function AdminPaymentQueue() {
   const { currentUser, isAdmin } = useUser();
   const [requests, setRequests] = useState([]);
+  const [status, setStatus] = useState("pending");
   const [error, setError] = useState("");
   const [busyRequestId, setBusyRequestId] = useState("");
   const [seedingLessons, setSeedingLessons] = useState(false);
@@ -34,7 +35,7 @@ export default function AdminPaymentQueue() {
   useEffect(() => {
     const pendingQuery = query(
       collection(db, "payment_requests"),
-      where("status", "==", "pending"),
+      where("status", "==", status),
     );
     return onSnapshot(
       pendingQuery,
@@ -47,8 +48,8 @@ export default function AdminPaymentQueue() {
             }))
             .sort(
               (first, second) =>
-                (first.createdAt?.toMillis() ?? 0) -
-                (second.createdAt?.toMillis() ?? 0),
+                (second.createdAt?.toMillis() ?? 0) -
+                (first.createdAt?.toMillis() ?? 0),
             ),
         );
         setError("");
@@ -58,7 +59,7 @@ export default function AdminPaymentQueue() {
         setError("Could not load pending payment requests.");
       },
     );
-  }, []);
+  }, [status]);
 
   async function reviewRequest(requestId, action) {
     setBusyRequestId(requestId);
@@ -195,31 +196,29 @@ export default function AdminPaymentQueue() {
   }
 
   return (
-    <main className="min-h-screen bg-slate-50 px-4 py-6 text-slate-900 sm:px-6 sm:py-10">
-      <div className="mx-auto max-w-5xl">
+    <main className="min-h-screen bg-background px-4 py-6 text-foreground sm:px-6 sm:py-10">
+      <div className="mx-auto max-w-6xl">
         <header className="mb-6 flex flex-wrap items-center justify-between gap-4">
-          <h1 className="text-2xl font-semibold tracking-tight">
-            Pending payment requests
-          </h1>
-          <a
-            className="min-h-11 content-center rounded-xl border border-indigo-200 bg-white px-4 py-2 text-sm font-semibold text-indigo-700 transition hover:bg-indigo-50"
-            href="/"
-          >
-            Back to Catalog
-          </a>
+          <h1 className="text-4xl font-semibold">Payment requests</h1>
+          <a className="rounded-xl border border-input px-4 py-2 text-sm font-semibold transition hover:bg-secondary" href="/">Back to Catalog</a>
         </header>
+        <div className="mt-6 flex gap-2">
+          {["pending", "approved", "rejected"].map((item) => (
+            <button key={item} onClick={() => setStatus(item)} className={`rounded-xl px-4 py-2 text-sm font-semibold capitalize ${status === item ? "bg-gradient-primary text-primary-foreground" : "border border-input hover:bg-secondary"}`} type="button">{item}</button>
+          ))}
+        </div>
         <section
           aria-labelledby="science-seed-title"
-          className="mb-6 rounded-2xl border border-indigo-200 bg-white p-4 shadow-sm sm:p-6"
+          className="mb-6 mt-6 rounded-2xl border border-border bg-card p-4 shadow-soft sm:p-6"
         >
           <h2
-            className="text-lg font-semibold text-slate-900"
+            className="text-lg font-semibold"
             id="science-seed-title"
           >
             Admin tools
           </h2>
           <button
-            className="mt-4 min-h-11 rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 disabled:cursor-wait disabled:opacity-60"
+            className="mt-4 min-h-11 rounded-xl bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition disabled:cursor-wait disabled:opacity-60"
             disabled={seedingLessons}
             onClick={() => void seedScienceLessons()}
             type="button"
@@ -229,34 +228,34 @@ export default function AdminPaymentQueue() {
               : "Seed Grade 8 Science Lessons to Firestore"}
           </button>
           {seedMessage && (
-            <p className="mt-3 text-sm text-emerald-700" role="status">
+            <p className="mt-3 text-sm text-primary" role="status">
               {seedMessage}
             </p>
           )}
           {seedError && (
-            <p className="mt-3 text-sm text-rose-700" role="alert">
+            <p className="mt-3 text-sm text-destructive" role="alert">
               {seedError}
             </p>
           )}
         </section>
       {error && (
-        <p className="mt-3 text-sm text-rose-700" role="alert">
+        <p className="mt-3 text-sm text-destructive" role="alert">
           {error}
         </p>
       )}
       {!requests.length ? (
-        <p className="mt-3 text-sm text-slate-600">
-          There are no pending payment requests.
+        <p className="py-10 text-center text-muted-foreground">
+          Nothing here.
         </p>
       ) : (
         <ul className="mt-4 space-y-3">
           {requests.map((payment) => (
             <li
-              className="flex flex-col gap-3 rounded-xl border border-slate-200 p-4 sm:flex-row sm:items-center sm:justify-between"
+              className="animate-rise flex flex-col gap-3 rounded-2xl border border-border bg-card p-5 shadow-soft sm:flex-row sm:items-center sm:justify-between"
               key={payment.id}
             >
-              <div className="text-sm text-slate-700">
-                <p className="font-semibold text-slate-900">
+              <div className="text-sm">
+                <p className="font-semibold">
                   {payment.userEmail || payment.userId}
                 </p>
                 <p>
@@ -269,7 +268,8 @@ export default function AdminPaymentQueue() {
               </div>
               <div className="flex gap-2">
                 <button
-                  className="min-h-10 rounded-lg bg-emerald-700 px-3 py-2 text-sm font-semibold text-white disabled:opacity-50"
+                  className="rounded-xl bg-gradient-primary px-4 py-2 text-sm font-semibold text-primary-foreground disabled:opacity-50"
+                  hidden={status !== "pending"}
                   disabled={Boolean(busyRequestId)}
                   onClick={() => reviewRequest(payment.id, "approve")}
                   type="button"
@@ -277,7 +277,8 @@ export default function AdminPaymentQueue() {
                   {busyRequestId === payment.id ? "Processing…" : "Approve"}
                 </button>
                 <button
-                  className="min-h-10 rounded-lg border border-slate-300 px-3 py-2 text-sm font-semibold text-slate-700 disabled:opacity-50"
+                  className="rounded-xl border border-destructive px-4 py-2 text-sm font-semibold text-destructive disabled:opacity-50"
+                  hidden={status !== "pending"}
                   disabled={Boolean(busyRequestId)}
                   onClick={() => reviewRequest(payment.id, "reject")}
                   type="button"
