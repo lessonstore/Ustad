@@ -13,7 +13,7 @@ const write = (key, v) => { try { if (!key) return; v == null ? localStorage.rem
  *
  *   <LessonPlanEditor lesson={lessonFromServer} lang="en" branding={...} storageKey={`plan-${id}`} onChange={save} />
  */
-export default function LessonPlanEditor({ lesson: original, lang = 'en', branding, capsules, storageKey, onChange }) {
+export default function LessonPlanEditor({ lesson: original, lang = 'en', branding, capsules, storageKey, onChange, ...layout }) {
   const S = STRINGS[lang] ?? STRINGS.en, D = S.dialog;
   const [edits, setEdits] = useState(() => read(storageKey)); // null = untouched
   const lesson = edits ?? original;
@@ -35,7 +35,7 @@ export default function LessonPlanEditor({ lesson: original, lang = 'en', brandi
 
   return (
     <>
-      <LessonPlanC lesson={lesson} lang={lang} branding={branding} capsules={capsules}
+      <LessonPlanC lesson={lesson} lang={lang} branding={branding} capsules={capsules} {...layout}
         editable onEdit={setOpen} onLayout={(x) => setOversize(x.oversize)} />
       {oversize && <div className="lpe-warn" role="alert">{D.tooLong}</div>}
       {open && <EditDialog key={open} section={open} lesson={lesson} original={original} lang={lang} onSave={commit} onClose={() => setOpen(null)} />}

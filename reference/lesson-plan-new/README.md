@@ -59,6 +59,18 @@ Use `<LessonPlanEditor />` instead of `<LessonPlanC />` to let teachers edit:
 - The edited copy is stored under `storageKey` (localStorage) and passed to `onChange`; the original server lesson is never modified.
 - A warning shows when a single box is taller than one page.
 
+## Layout options
+
+```jsx
+<LessonPlanC / LessonPlanEditor
+  edgeHeadings={true}    // capsule + minutes pill sit on the box border. Default: true for Urdu, false for English
+  urFontSize={17}        // Urdu text size in px (default 17)
+  urLineHeight={1.55}    // Urdu line spacing (default 1.55)
+  capsules={true}        // false = plain headings
+/>
+```
+Urdu minute pills are all as wide as the longest one; capsules in each group (main boxes / side boxes) are as wide as the widest label of the group (measured, not guessed).
+
 ## Timing
 
 Introduction / Development / Conclusion / Assessment show minutes. Defaults: 30 min =

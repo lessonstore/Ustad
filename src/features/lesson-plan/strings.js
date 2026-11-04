@@ -27,7 +27,7 @@ export const STRINGS = {
     lesson: 'تدریسی منصوبہ',
     glance: 'ایک نظر میں', time: 'وقت', date: 'تاریخ',
     studentsWill: 'طلبہ کے حاصلاتِ تعلم', bring: 'درکار سامان',
-    teacherNotes: 'استاد کے لیے معلومات', observations: 'مشاہدات',
+    teacherNotes: 'معلومات برائے استاد', observations: 'مشاہدات',
     introduction: 'تعارف', development: 'پیش رفت', conclusion: 'خلاصہ',
     assessment: 'جائزہ', followUp: 'تکمیلی کام',
     min: 'منٹ', preparedBy: 'تیار کردہ:',

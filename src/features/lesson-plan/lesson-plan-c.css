@@ -1,7 +1,7 @@
 /* Lesson plan · Template C (English + Urdu). All classes are prefixed .lpc- so they
    do not clash with Tailwind or the rest of the app. One .lpc = one A4 page. */
 
-.lpc{width:210mm;height:297mm;flex:none;box-sizing:border-box;display:flex;flex-direction:column;
+.lpc{--lpc-cap-h:24px;width:210mm;height:297mm;flex:none;box-sizing:border-box;display:flex;flex-direction:column;
   padding:12mm var(--lp-pr,15mm) 12mm var(--lp-pl,15mm);background:#fff;color:#111;
   font-family:'IBM Plex Sans',Arial,sans-serif;font-size:13px;line-height:1.5}
 .lpc *,.lpc *::before,.lpc *::after{box-sizing:border-box}
@@ -19,7 +19,7 @@
 .lpc-badge{flex:none;border:1.5px solid #777776;padding:4px 12px;font-weight:700;font-size:12px;color:#fff;background:#111;border-radius:5px}
 
 /* body */
-.lpc-grid{display:grid;grid-template-columns:210px 1fr;gap:18px;padding:20px 0 12px;flex:1}
+.lpc-grid{display:grid;grid-template-columns:210px 1fr;gap:18px;padding:20px 0 0;flex:1}
 .lpc-col{display:flex;flex-direction:column}
 .lpc-left>.lpc-obs{flex:1}
 .lpc-right>.lpc-box{flex:1 1 auto}
@@ -29,16 +29,21 @@
 .lpc-k{margin:0 0 8px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;font-weight:700}
 .lpc-gap{margin-top:12px}
 .lpc-box h3{margin:0 0 6px;font-size:13px;font-weight:400;display:flex;justify-content:space-between;align-items:center}
-.lpc-pill{font-weight:400;font-size:11px;border:1.5px dashed #111;border-radius:99px;padding:0 10px}
+.lpc-pill{font-weight:400;font-size:11px;background:#fff;border:1.5px dashed #111;border-radius:99px;padding:0 10px}
 .lpc-check{display:flex;gap:8px;margin:3px 0}
 .lpc-check i{flex:none;width:12px;height:12px;border:1.5px solid #111;margin-top:3px;border-radius:2px}
 
 /* heading capsules (English: all one size) */
-.lpc-cap,.lpc-box>.lpc-k:first-child{display:inline-flex;align-items:center;justify-content:center;width:118px;height:24px;padding:0 10px;
+.lpc-cap,.lpc-box>.lpc-k:first-child{display:inline-flex;align-items:center;justify-content:center;width:118px;height:var(--lpc-cap-h);padding:0 10px;
   white-space:nowrap;font-size:11.5px;font-weight:700;line-height:1.2;background:#111;color:#fff;border-radius:99px;
   -webkit-print-color-adjust:exact;print-color-adjust:exact}
 .lpc-box>.lpc-k:first-child{display:flex}
 .lpc--plain .lpc-cap,.lpc--plain .lpc-box>.lpc-k:first-child{background:none;color:#111;width:auto;height:auto;padding:0;justify-content:flex-start}
+
+/* headings on the border (edge headings): capsule and pill straddle the box's top line */
+.lpc--edge .lpc-box{padding-top:calc(var(--lpc-cap-h) / 2 + 4px);margin-bottom:calc(var(--lpc-cap-h) / 2 + 4px)}
+.lpc--edge .lpc-box h3{position:absolute;top:calc(var(--lpc-cap-h) / -2);inset-inline:14px;height:var(--lpc-cap-h);margin:0}
+.lpc--edge .lpc-box>.lpc-k:first-child{position:absolute;top:calc(var(--lpc-cap-h) / -2);inset-inline-start:14px;margin:0}
 
 /* footer */
 .lpc-footer{margin-top:auto;padding-top:10px;border-top:1px solid #111;display:flex;align-items:center;gap:16px;font-size:10px;color:#333;letter-spacing:.03em}
@@ -51,20 +56,21 @@
 /* ---------------- Urdu (right-to-left, Nastaliq) ---------------- */
 /* Jameel Noori Nastaleeq is used when it is installed; add it with @font-face (check its licence)
    to guarantee it on every device. Noto Nastaliq Urdu (bundled) is the fallback. */
-.lpc--ur{font-family:'Jameel Noori Nastaleeq','Noto Nastaliq Urdu',serif;font-size:13px;line-height:1.9}
+.lpc--ur{--lpc-cap-h:26px;font-family:'Jameel Noori Nastaleeq','Noto Nastaliq Urdu',serif;font-size:var(--lpc-ur-fs,17px);line-height:var(--lpc-ur-lh,1.55);padding-top:32px}
 .lpc--ur *{letter-spacing:0!important;text-transform:none!important}
-.lpc--ur .lpc-k{font-size:11px}
-.lpc--ur .lpc-pill{font-size:10px;line-height:1.9}
-.lpc--ur .lpc-cap,.lpc--ur .lpc-box>.lpc-k:first-child{display:inline-block;width:auto;height:22px;line-height:22px;padding:0 12px;text-align:center}
+.lpc--ur .lpc-k{font-size:calc(var(--lpc-ur-fs,17px) - 3px)}
+.lpc--ur .lpc-pill{font-size:calc(var(--lpc-ur-fs,17px) - 4px);line-height:var(--lpc-ur-lh,1.55);text-align:center}
+.lpc--ur .lpc-pill::after{content:var(--lpc-pill-ref,'');display:block;height:0;overflow:hidden;visibility:hidden}
+.lpc--ur .lpc-cap,.lpc--ur .lpc-box>.lpc-k:first-child{display:inline-block;width:auto;height:var(--lpc-cap-h);line-height:var(--lpc-cap-h);padding:0 12px;text-align:center;font-size:calc(var(--lpc-ur-fs,17px) - 2.5px)}
 .lpc--ur .lpc-box>.lpc-k:first-child{display:block;width:fit-content}
 .lpc--ur .lpc-cap::after{content:var(--lpc-ref-main,'');display:block;height:0;overflow:hidden;visibility:hidden}
 .lpc--ur .lpc-box>.lpc-k:first-child::after{content:var(--lpc-ref-side,'');display:block;height:0;overflow:hidden;visibility:hidden}
 .lpc--ur.lpc--plain .lpc-cap,.lpc--ur.lpc--plain .lpc-box>.lpc-k:first-child{height:auto;line-height:inherit;padding:0}
 
 /* Urdu banner: fixed height so the divider never moves */
-.lpc--ur .lpc-banner{height:96px;padding:0 0 10px;display:grid;grid-template-columns:210px 1fr auto;column-gap:18px;align-items:center}
+.lpc--ur .lpc-banner{height:86px;padding:0;display:grid;grid-template-columns:210px 1fr auto;column-gap:18px;align-items:center}
 .lpc-info{display:flex;align-items:center;gap:12px}
-.lpc-info-text{flex:1;min-width:0;position:relative;font-size:12.5px;line-height:1.8;color:#555}
+.lpc-info-text{flex:1;min-width:0;position:relative;font-size:14.5px;line-height:1.7;color:#555}
 .lpc-info-text b{display:block;color:#1a1a1a}
 .lpc-probe{position:absolute;top:0;inset-inline-end:0;visibility:hidden;white-space:nowrap;pointer-events:none}
 .lpc-line{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -85,6 +91,12 @@
 .lpc-measure{position:absolute;left:-10000px;top:0;visibility:hidden;pointer-events:none}
 .lpc-measure .lpc-right>.lpc-box{flex:none}
 .lpc-measure .lpc-left{width:210px}
+.lpc-capprobe{position:absolute;top:0;left:0;visibility:hidden;white-space:nowrap;font-weight:700;font-size:calc(var(--lpc-ur-fs,17px) - 2.5px)}
+
+/* Urdu page rhythm: tighter bottom, footer text hangs just below its line */
+.lpc--ur .lpc-grid{padding:20px 0 14px}
+.lpc--ur .lpc-col>.lpc-box:last-child{margin-bottom:0}
+.lpc--ur .lpc-footer{height:9px;padding-top:3px;align-items:flex-start;font-size:11.5px;line-height:1.6}
 
 @page{size:A4;margin:0}
 @media print{

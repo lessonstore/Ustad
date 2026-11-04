@@ -119,9 +119,10 @@ function Banner({ l, b, S, ur, onEdit }) {
  *  - Boxes on each page share the free space evenly. Re-paginates live when the lesson changes.
  * <LessonPlanC lang="ur" lesson={lessonUr} branding={{ teacherName, schoolName }} />
  */
-export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, capsules = true, editable = false, onEdit, onLayout }) {
+export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, capsules = true, editable = false, onEdit, onLayout, edgeHeadings, urFontSize = 17, urLineHeight = 1.55 }) {
   const S = STRINGS[lang] ?? STRINGS.en;
   const ur = lang === 'ur';
+  const edge = edgeHeadings ?? ur; // headings on the border: on for Urdu, off for English by default
   const b = { ...DEFAULT_BRANDING, ...branding };
   const mins = phaseMinutes(l);
 
@@ -133,14 +134,23 @@ export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, cap
     [S.followUp, l.followUp, false],
   ];
 
+  const mainLabels = boxes.map((x) => x[0]);
+  const sideLabels = [S.glance, S.teacherNotes, S.observations];
+  // widest capsule label of each group, measured below (starts with a guess by length)
+  const [refs, setRefs] = useState({ main: longest(mainLabels), side: longest(sideLabels) });
+
   const style = {
     '--lp-pl': b.extraMargin === 'left' ? '20mm' : '15mm',
     '--lp-pr': b.extraMargin === 'right' ? '20mm' : '15mm',
+    '--lpc-ur-fs': `${urFontSize}px`,
+    '--lpc-ur-lh': urLineHeight,
+    // Urdu minute pills: all as wide as the longest one
+    '--lpc-pill-ref': JSON.stringify(`${longest(mins.slice(0, 4).map(String))} ${S.min}`),
     // Urdu capsules: every capsule in a group is as wide as the longest label of the group
-    '--lpc-ref-main': JSON.stringify(longest(boxes.map((x) => x[0]))),
-    '--lpc-ref-side': JSON.stringify(longest([S.glance, S.teacherNotes, S.observations])),
+    '--lpc-ref-main': JSON.stringify(refs.main),
+    '--lpc-ref-side': JSON.stringify(refs.side),
   };
-  const cls = `lpc${ur ? ' lpc--ur' : ''}${capsules ? '' : ' lpc--plain'}`;
+  const cls = `lpc${ur ? ' lpc--ur' : ''}${capsules ? '' : ' lpc--plain'}${edge ? ' lpc--edge' : ''}`;
 
   const renderBox = ([title, items, timed], n, edit = false) => (
     <div className="lpc-box" key={n}>
@@ -175,12 +185,18 @@ export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, cap
         next[next.length - 1].push(n); used += h;
       });
       setPages((prev) => (JSON.stringify(prev) === JSON.stringify(next) ? prev : next));
+      let bm = '', bw = 0, sm = '', sw = 0;
+      root.querySelectorAll('.lpc-capprobe').forEach((el) => {
+        const w = el.offsetWidth;
+        if (el.dataset.g === 'main') { if (w > bw) { bw = w; bm = el.textContent; } } else if (w > sw) { sw = w; sm = el.textContent; }
+      });
+      if (bm && sm) setRefs((prev) => (prev.main === bm && prev.side === sm ? prev : { main: bm, side: sm }));
       onLayout?.({ pages: next.length, oversize: heights.some((h) => h > avail) });
     };
     run();
     document.fonts?.ready.then(run);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [l, lang, capsules, b.logo, b.schoolLogoUrl, b.schoolName, b.teacherName]);
+  }, [l, lang, capsules, edge, urFontSize, urLineHeight, b.logo, b.schoolLogoUrl, b.schoolName, b.teacherName]);
 
   return (
     <div className="lpc-doc">
@@ -193,6 +209,8 @@ export default function LessonPlanC({ lesson: l, lang = 'en', branding = {}, cap
             <div className="lpc-col lpc-right" ref={mRight}>{boxes.map((x, n) => renderBox(x, n))}</div>
           </div>
           <div ref={mFooter}><Footer b={b} S={S} page={1} pages={1} /></div>
+          {mainLabels.map((t) => <span className="lpc-capprobe" data-g="main" key={'m' + t}>{t}</span>)}
+          {sideLabels.map((t) => <span className="lpc-capprobe" data-g="side" key={'s' + t}>{t}</span>)}
         </div>
       </div>
 
